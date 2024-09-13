@@ -66,8 +66,6 @@ En Ts
     
 ```
 
-
-
 ```gherkin
 Feature: GitHub Home Page
 
