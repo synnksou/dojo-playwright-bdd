@@ -74,6 +74,7 @@ export default defineConfig({
 ```
 [API Test configuration Playwright](https://playwright.dev/docs/test-configuration)
 
+
 ### Coverage
 
 Pour générer des rapports de couverture de code, nous allons utiliser `monocart-coverage-reports`. Voici comment configurer la couverture de code dans votre projet.
@@ -132,27 +133,41 @@ Cette fonction démarre la collecte de la couverture de code JavaScript pour la 
 
 Cette fonction arrête la collecte de la couverture de code JavaScript et renvoie les données de couverture collectées. Ces données peuvent ensuite être utilisées pour générer des rapports de couverture de code.
 
-3. Créez un fichier de configuration `mcr.config.js` pour `monocart-coverage-reports` :
+### Configuration des fichiers globaux
+Pour configurer les fichiers globaux nécessaires à votre projet de plus avec MCR, vous devez créer deux fichiers : global-setup.ts et global-teardown.ts. 
+Ces fichiers permettent de configurer et de nettoyer l'environnement de test avant et après l'exécution des tests respectivement. 
 
-```javascript
-module.exports = {
-  reports: {
-    html: {
-      output: 'coverage/html',
-    },
-    json: {
-      output: 'coverage/coverage-final.json',
-    },
-  },
-};
+#### `global-setup.ts`
+Ce fichier est utilisé pour configurer l'environnement de test avant l'exécution des tests. Par exemple, vous pouvez l'utiliser pour initialiser des variables d'environnement, configurer des connexions à des bases de données, etc.
+
+```typescript
+import MCR from 'monocart-coverage-reports';
+
+import coverageOptions from './mcr.config';
+
+async function globalSetup() {
+  const mcr = MCR(coverageOptions);
+  mcr.cleanCache();
+}
+
+export default globalSetup;
 ```
 
-4. Ajoutez un script dans votre `package.json` pour générer le rapport de couverture :
+#### `global-teardown.ts`
+Ce fichier est utilisé pour nettoyer l'environnement de test après l'exécution des tests. Par exemple, vous pouvez l'utiliser pour fermer des connexions à des bases de données, supprimer des fichiers temporaires, etc.
 
-```json
-"scripts": {
-  "test:coverage": "npx playwright test && npx monocart-coverage-reports"
+```typescript
+import MCR from 'monocart-coverage-reports';
+
+import coverageOptions from './mcr.config';
+
+async function globalTeardown() {
+  const mcr = MCR(coverageOptions);
+  await mcr.generate();
 }
+
+export default globalTeardown;
+
 ```
 
 ### Écriture des tests
