@@ -12,7 +12,7 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
 	testDir,
-
+	timeout: 30000,
 	reporter: [
 		['list'],
 		cucumberReporter('junit', {
@@ -24,6 +24,7 @@ export default defineConfig({
 	globalTeardown: 'tests/utils/global.teardown.ts',
 	use: {
 		video: 'on',
+		viewport: { width: 1920, height: 1080 },
 	},
 	projects: [
 		{

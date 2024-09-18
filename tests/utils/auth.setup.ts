@@ -10,10 +10,8 @@ setup('authenticate', async ({ page }) => {
 	await page.getByRole('button', { name: 'Sign in', exact: true }).click();
 
 	// IF 2FA is enabled, you can add the following code to handle it.
-	//await page.pause();
-
-	// Alternatively, you can wait until the page reaches a state where all cookies are set.
-	await expect(page.getByRole('button', { name: 'View profile and more' })).toBeVisible();
+	await page.pause();
+	await expect(page.getByRole('link', { name: 'Dashboard' })).toBeVisible({ timeout: 30000 });
 
 	await page.context().storageState({ path: authFile });
 });
