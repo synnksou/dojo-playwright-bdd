@@ -44,10 +44,4 @@ export default defineConfig({
 			dependencies: ['auth'],
 		},
 	],
-	webServer: {
-		command: 'npm run start',
-		port: 5173,
-		url: 'http://localhost',
-		reuseExistingServer: !process.env.CI,
-	},
 });
