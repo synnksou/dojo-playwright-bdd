@@ -117,6 +117,9 @@ Then('....', async ({ page }, title) => {
 });
 ```
 
+Ensuite utilisez la commande
+
+`npx bddgen` ou `npm run test` qui lance bddgen & playwright
 
 
 #### Test de la page GitHub
