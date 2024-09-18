@@ -166,6 +166,8 @@ Then('I should be redirected to the sign-up page', async ({ page }) => {
 
 #### Ajout du test d'authentification
 
+ATTENTION IL NE FAUT PAS AVOIR LA 2FA ACTIVER POUR LA FONCTION DE AUTH
+
 Ici pour ce faire, vous avez plusieurs possibilité pour le mettre en place, si vous voulez mettre en place "before overall test" alors, il vaut mieux utilisé les globals setup.
 
 Sinon vous avez des hooks avec playwright-bdd comme `Before` ou `After` qui permette d'utilisé avant chaque scénario, ce sont les hooks mais bien que les hooks soient un concept bien connu, Playwright propose une meilleure alternative : les fixtures. 
@@ -177,28 +179,26 @@ Créez le ficher `auth.setup.ts`
 
 ```typescript
 
-import { test as setup, expect } from '@playwright/test';
-import path from 'path';
+import { expect, test as setup } from '@playwright/test';
 
-const authFile = path.join(__dirname, 'e2e/.auth/user.json');
+const authFile = 'tests/.auth/user.json';
 
 setup('authenticate', async ({ page }) => {
-  // Perform authentication steps. Replace these actions with your own.
-  await page.goto('https://github.com/login');
-  await page.getByLabel('Username or email address').fill('username');
-  await page.getByLabel('Password').fill('password');
-  await page.getByRole('button', { name: 'Sign in' }).click();
+	// Perform authentication steps. Replace these actions with your own.
+	await page.goto('https://github.com/login');
+	await page.getByLabel('Username or email address').fill('pseudo');
+	await page.getByLabel('Password').fill('password');
+	await page.getByRole('button', { name: 'Sign in', exact: true }).click();
 
+	// IF 2FA is enabled, you can add the following code to handle it.
+	//await page.pause(); and manualy
 
-  // Wait until the page receives the cookies.
-  // Sometimes login flow sets cookies in the process of several redirects.
-  // Wait for the final URL to ensure that the cookies are actually set.
-  await page.waitForURL('https://github.com/');
-  // Alternatively, you can wait until the page reaches a state where all cookies are set.
-  await expect(page.getByRole('button', { name: 'View profile and more' })).toBeVisible();
+	// Alternatively, you can wait until the page reaches a state where all cookies are set.
+	await expect(page.getByRole('button', { name: 'View profile and more' })).toBeVisible();
 
-  await page.context().storageState({ path: authFile });
+	await page.context().storageState({ path: authFile });
 });
+
 ```
 
 Ou sinon vous pouvez directement faire une request post 
@@ -222,6 +222,30 @@ setup('authenticate', async ({ request }) => {
 ```
 [APIRequestContext](https://playwright.dev/docs/api/class-apirequestcontext)
 
+Ensuite il suffit de l'ajouter dans la config PW
+
+```typescript
+export default defineConfig({
+	testDir,
+	....
+	projects: [
+		{
+			name: 'auth', // ICI L'AUTH
+			testMatch: '**/auth.setup.ts',
+			testDir: 'tests/utils',
+		},
+		{
+			name: 'chromium',
+			use: { ...devices['Desktop Chrome'], storageState: 'tests/.auth/user.json' },
+			dependencies: ['auth'], // LES TESTS SERONT TJR LANCER AVEC AUTH EN BEFORE
+		},
+	],
+});
+
+```
+Exemple d'image
+![image](https://github.com/user-attachments/assets/c2597549-1ad7-4127-a1a3-469f756862df)
+
 
 ......
 
@@ -240,41 +264,38 @@ Créez un fichier de test sous `tests/commit/commit.feature` :
 ```gherkin
 Feature: Création de commit
 
-  Scenario: Créer un commit sur GitHub
-    Given Je suis connecté à GitHub
-    When Je crée un nouveau fichier nommé "test-file.txt" avec le contenu "This is a test file."
-    Then Le commit "Create test-file.txt" est créé
+    Scenario: Créer un commit sur GitHub
+        Given Je suis connecté à GitHub
+        When Je crée un nouveau fichier nommé "test-file.txt" avec le contenu "This is a test file."
+        Then Le commit "Create test-file.txt" est créé
 ```
 
 Créez le fichier de définition des étapes correspondant dans `tests/commit/commit.stepdefinitions.ts` :
 
 ```typescript
-import { createBdd } from 'playwright-bdd';
 import { expect } from '@playwright/test';
-
-const { Given, When, Then } = createBdd();
-
+import { Given, When, Then } from '../../utils';
 
 Given('Je suis connecté à GitHub', async ({ page }) => {
-  await page.goto('https://github.com/login');
-  await page.fill('input[name="login"]', process.env.GITHUB_USERNAME);
-  await page.fill('input[name="password"]', process.env.GITHUB_TOKEN);
-  await page.click('input[name="commit"]');
+	await page.goto('https://github.com/synnksou/dojo-playwright-bdd');
 });
 
 When('Je crée un nouveau fichier nommé {string} avec le contenu {string}', async ({ page }, fileName, content) => {
-  await page.goto('https://github.com/votre-utilisateur/dojo-playwright');
-  await page.click('text=Add file');
-  await page.click('text=Create new file');
-  await page.fill('input[name="filename"]', fileName);
-  await page.fill('.CodeMirror', content);
-  await page.click('text=Commit new file');
+	await page.getByRole('button', { name: 'Add file' }).click();
+	await page.getByLabel('Create new file').click();
+	await page.getByRole('region', { name: 'Editing file contents' }).click();
+	await page.getByLabel('Use Control + Shift + m to').fill(content);
+	await page.getByPlaceholder('Name your file...').fill(fileName);
+	await page.getByRole('button', { name: 'Commit changes...' }).click();
+	await page.getByRole('button', { name: 'Add file' }).click();
+	await page.getByLabel('Create new file').click();
 });
 
 Then('Le commit {string} est créé', async ({ page }, commitMessage) => {
-  const message = await page.textContent('.commit-message');
-  expect(message).toContain(commitMessage);
+	const message = await page.textContent('Create test-file.txt');
+	expect(message).toContain(commitMessage);
 });
+
 ```
 
 </details>
@@ -289,33 +310,38 @@ Gherkin
 ```gherkin
 Feature: Téléchargement du repo
 
-  Scenario: Télécharger le repo GitHub
-    Given Je suis la page du repo
-    When Je télécharge le repo "dojo-playwright"
-    Then Le téléchargement est réussi
+    Scenario: Télécharger le repo GitHub
+        Given Je suis la page du repo
+        When Je télécharge le repo
+        Then Le téléchargement est réussi
 ```
 
 Step 
 ```typescript
-const { Given, When, Then } = createBdd();
+import { expect } from '@playwright/test';
+import { Given, When, Then } from '../../utils';
+import fs from 'fs';
+
+const PATH = './temp/';
+let downloadFile: any;
 
 Given('Je suis la page du repo', async ({ page }) => {
-  await page.goto('https://github.com/synnksou/dojo-playwright-bdd');
+	await page.goto('https://github.com/synnksou/dojo-playwright-bdd');
 });
 
 When('Je télécharge le repo', async ({ page }, email) => {
-  await page.getByRole('button', { name: 'Code' }).click();
-  const downloadPromise = page.waitForEvent('download');
-  await page.getByLabel('Download ZIP').click();
-  const download = await downloadPromise;
-  const path = download.suggestedFilename();
-  await download.saveAs(path);
+	await page.getByRole('button', { name: 'Code' }).click();
+	const downloadPromise = page.waitForEvent('download');
+	await page.getByLabel('Download ZIP').click();
+	const download = await downloadPromise;
+	downloadFile = download.suggestedFilename();
+	await download.saveAs(PATH + downloadFile);
 });
 
 Then('Le téléchargement est réussi', async ({ page }) => {
-  await expect(fs.promises.stat('./temp/' + downloadFile?.suggestedFilename())).resolves.not.toBeNull();
-  await fs.promises.unlink('./temp/' + downloadFile?.suggestedFilename());
-}):
+	await expect(fs.promises.stat(PATH + downloadFile)).resolves.not.toBeNull();
+	await fs.promises.unlink(PATH + downloadFile);
+});
 
 ```
 
@@ -365,6 +391,8 @@ export const test = base.extend<{
     },
   ],
 });
+
+export const { Given, When, Then } = createBdd(test); // On export tout les steps avec les fixtures
 ```
 
 #### `page.coverage.startJSCoverage`
@@ -375,7 +403,7 @@ Cette fonction démarre la collecte de la couverture de code JavaScript pour la 
 
 Cette fonction arrête la collecte de la couverture de code JavaScript et renvoie les données de couverture collectées. Ces données peuvent ensuite être utilisées pour générer des rapports de couverture de code.
 
-### Configuration des fichiers globaux
+3. Configuration des fichiers globaux
 Pour configurer les fichiers globaux nécessaires à votre projet de plus avec MCR, vous devez créer deux fichiers : global-setup.ts et global-teardown.ts. 
 Ces fichiers permettent de configurer et de nettoyer l'environnement de test avant et après l'exécution des tests respectivement. 
 
@@ -412,6 +440,45 @@ export default globalTeardown;
 
 ```
 
+#### `mcr.config.ts`
+Ce fichier est utilisé pour la configuration du reporting coverage des tests
+
+```typescript
+
+import { CoverageReportOptions } from 'monocart-coverage-reports';
+
+const coverageOptions: CoverageReportOptions = {
+	enable: true,
+	name: 'playwright-bdd-coverage',
+	reports: ['text', 'text-summary', ['html', { subdirdir: 'coverage' }], ['lcov', { file: 'lcov.info' }]],
+	entryFilter: {
+		'**/node_modules/**': false,
+		'**/tests/**': false,
+		'**/*.[jt]s?(x)': true,
+		'**/app/**': false,
+	},
+	sourceFilter: {
+		'**/node_modules/**': false,
+		'**/tests/**': false,
+		'**/*.[jt]s?(x)': true,
+		'**/app/**': false,
+	},
+	outputDir: './coverage/playwright',
+};
+
+export default coverageOptions;
+
+```
+
+Exemple de coverage CLI
+
+![image](https://github.com/user-attachments/assets/c26ae8b2-7994-4d69-94d0-68fe58c04916)
+
+Exemple de coverage HTML
+
+![image](https://github.com/user-attachments/assets/8ec498c0-b846-44b0-b66c-46647193bdb0)
+
+
 ### Configuration CI/CD avec GitHub Actions
 
 Créez un fichier `.github/workflows/test.yml` :
@@ -440,11 +507,11 @@ jobs:
       - name: Run tests
         run: npm test
         env:
-          GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
+            GITHUB_PASSWORD: ${{ secrets.GITHUB_PASSWORD }}
 ```
 
-Assurez-vous d’ajouter les secrets `GITHUB_USERNAME` et `GITHUB_TOKEN` dans les paramètres de votre dépôt GitHub (`Settings > Secrets and variables > Actions`).
+Assurez-vous d’ajouter les secrets `GITHUB_USERNAME` et `GITHUB_PASSWORD` dans les paramètres de votre dépôt GitHub (`Settings > Secrets and variables > Actions`).
 
 
 ### Sources
