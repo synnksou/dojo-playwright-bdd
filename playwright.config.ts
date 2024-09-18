@@ -22,7 +22,7 @@ export default defineConfig({
 	globalSetup: 'tests/utils/global.setup.ts',
 	globalTeardown: 'tests/utils/global.teardown.ts',
 	use: {
-		video: 'on-first-retry',
+		video: 'on',
 	},
 	projects: [
 		{
