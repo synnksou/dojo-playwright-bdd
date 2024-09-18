@@ -7,6 +7,10 @@ import path from 'path';
 const testDir = defineBddConfig({
 	features: 'tests/features/**/*.feature',
 	steps: 'tests/features/**/*.stepdefinitions.ts',
+	importTestFrom: 'tests/utils/fixtures.ts',
+	disableWarnings: {
+		importTestFrom: true,
+	},
 });
 
 const envPath = path.resolve(__dirname, '.env');
@@ -16,11 +20,34 @@ if(existsSync(envPath)){
 
 export default defineConfig({
 	testDir,
-	reporter: [cucumberReporter('html', { outputFile: 'cucumber-report/report.html' })],
+	reporter: [
+		['list'],
+		cucumberReporter('junit', {
+			outputFile: 'tests/reports/junit.xml',
+			suiteName: 'Playwright Coverage',
+		}),
+	],
+	globalSetup: 'tests/utils/global.setup.ts',
+	globalTeardown: 'tests/utils/global.teardown.ts',
+	use: {
+		video: 'on-first-retry',
+	},
 	projects: [
 		{
+			name: 'auth',
+			testMatch: '**/auth.setup.ts',
+			testDir: 'tests/utils',
+		},
+		{
 			name: 'chromium',
-			use: { ...devices['Desktop Chrome'] },
+			use: { ...devices['Desktop Chrome'], storageState: 'tests/.auth/user.json' },
+			dependencies: ['auth'],
 		},
 	],
+	webServer: {
+		command: 'npm run start',
+		port: 5173,
+		url: 'http://localhost',
+		reuseExistingServer: !process.env.CI,
+	},
 });
