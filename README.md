@@ -86,7 +86,6 @@ Pour exécuter les tests localement avec l'interface utilisateur, utilisez la co
 npx playwright test --ui
 ```
 
-
 ### Écriture des tests
 
 ### Exemple d'utilisation Playwright-bdd
@@ -116,8 +115,6 @@ Then('....', async ({ page }, title) => {
 ....
 });
 ```
-
-
 
 #### Test de la page GitHub
 
@@ -441,10 +438,10 @@ jobs:
         run: npm test
         env:
           GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PASSWORD: ${{ secrets.GITHUB_PASSWORD }}
 ```
 
-Assurez-vous d’ajouter les secrets `GITHUB_USERNAME` et `GITHUB_TOKEN` dans les paramètres de votre dépôt GitHub (`Settings > Secrets and variables > Actions`).
+Assurez-vous d’ajouter les secrets `GITHUB_USERNAME` et `GITHUB_PASSWORD` dans les paramètres de votre dépôt GitHub (`Settings > Secrets and variables > Actions`).
 
 
 ### Sources

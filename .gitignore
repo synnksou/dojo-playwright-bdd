@@ -17,3 +17,5 @@ cucumber-report
 
 .nx
 /update.sh
+.auth
+coverage
