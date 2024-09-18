@@ -72,96 +72,20 @@ export default defineConfig({
 ```
 [API Test configuration Playwright](https://playwright.dev/docs/test-configuration)
 
+### Exécution des Tests
 
-### Coverage
-
-Pour générer des rapports de couverture de code, nous allons utiliser `monocart-coverage-reports`. Voici comment configurer la couverture de code dans votre projet.
-
-1. Installez `monocart-coverage-reports` :
+Pour exécuter les tests localement, utilisez la commande suivante :
 
 ```bash
-npm install monocart-coverage-reports
+npx playwright test
 ```
 
-2. Configurez la couverture de code dans votre fichier `e2e/support/fixtures.ts` : 
+Pour exécuter les tests localement avec l'interface utilisateur, utilisez la commande suivante :
 
-```typescript
-import MCR from 'monocart-coverage-reports';
-import { test as base } from 'playwright-bdd';
-
-import coverageOptions from './mcr.config';
-
-export const test = base.extend<{
-  autoTestFixture: string;
-}>({
-  autoTestFixture: [
-    async ({ page }, use) => {
-      await Promise.all([
-          page.coverage.startJSCoverage({
-            resetOnNavigation: false,
-          }),
-        ]);
-      
-      await use('autoTestFixture');
-
-      const [jsCoverage] = await Promise.all([page.coverage.stopJSCoverage()]);
-      const coverageList = [...jsCoverage];
-      const mcr = MCR(coverageOptions);
-      await mcr.add(coverageList);
-      
-    },
-    {
-      scope: 'test',
-      auto: true,
-    },
-  ],
-});
+```bash
+npx playwright test --ui
 ```
 
-#### `page.coverage.startJSCoverage`
-
-Cette fonction démarre la collecte de la couverture de code JavaScript pour la page. Elle prend un objet d'options en paramètre, où vous pouvez spécifier des options comme `resetOnNavigation` pour indiquer si la couverture doit être réinitialisée lors de la navigation.
-
-#### `page.coverage.stopJSCoverage`
-
-Cette fonction arrête la collecte de la couverture de code JavaScript et renvoie les données de couverture collectées. Ces données peuvent ensuite être utilisées pour générer des rapports de couverture de code.
-
-### Configuration des fichiers globaux
-Pour configurer les fichiers globaux nécessaires à votre projet de plus avec MCR, vous devez créer deux fichiers : global-setup.ts et global-teardown.ts. 
-Ces fichiers permettent de configurer et de nettoyer l'environnement de test avant et après l'exécution des tests respectivement. 
-
-#### `global-setup.ts`
-Ce fichier est utilisé pour configurer l'environnement de test avant l'exécution des tests. Par exemple, vous pouvez l'utiliser pour initialiser des variables d'environnement, configurer des connexions à des bases de données, etc.
-
-```typescript
-import MCR from 'monocart-coverage-reports';
-
-import coverageOptions from './mcr.config';
-
-async function globalSetup() {
-  const mcr = MCR(coverageOptions);
-  mcr.cleanCache();
-}
-
-export default globalSetup;
-```
-
-#### `global-teardown.ts`
-Ce fichier est utilisé pour nettoyer l'environnement de test après l'exécution des tests. Par exemple, vous pouvez l'utiliser pour fermer des connexions à des bases de données, supprimer des fichiers temporaires, etc.
-
-```typescript
-import MCR from 'monocart-coverage-reports';
-
-import coverageOptions from './mcr.config';
-
-async function globalTeardown() {
-  const mcr = MCR(coverageOptions);
-  await mcr.generate();
-}
-
-export default globalTeardown;
-
-```
 
 ### Écriture des tests
 
@@ -361,18 +285,132 @@ Then('Le commit {string} est créé', async ({ page }, commitMessage) => {
 <details>
 <summary>Réponse</summary>
     
-
+Gherkin 
 ```gherkin
 Feature: Téléchargement du repo
 
   Scenario: Télécharger le repo GitHub
-    Given Je suis connecté à GitHub
+    Given Je suis la page du repo
     When Je télécharge le repo "dojo-playwright"
     Then Le téléchargement est réussi
 ```
 
+Step 
+```typescript
+const { Given, When, Then } = createBdd();
+
+Given('Je suis la page du repo', async ({ page }) => {
+  await page.goto('https://github.com/synnksou/dojo-playwright-bdd');
+});
+
+When('Je télécharge le repo', async ({ page }, email) => {
+  await page.getByRole('button', { name: 'Code' }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByLabel('Download ZIP').click();
+  const download = await downloadPromise;
+  const path = download.suggestedFilename();
+  await download.saveAs(path);
+});
+
+Then('Le téléchargement est réussi', async ({ page }) => {
+  await expect(fs.promises.stat('./temp/' + downloadFile?.suggestedFilename())).resolves.not.toBeNull();
+  await fs.promises.unlink('./temp/' + downloadFile?.suggestedFilename());
+}):
+
+```
+
 </details>
 
+
+## Coverage
+
+Pour générer des rapports de couverture de code, nous allons utiliser `monocart-coverage-reports`. Voici comment configurer la couverture de code dans votre projet.
+
+1. Installez `monocart-coverage-reports` :
+
+```bash
+npm install monocart-coverage-reports
+```
+
+2. Configurez la couverture de code dans votre fichier `e2e/support/fixtures.ts` : 
+
+```typescript
+import MCR from 'monocart-coverage-reports';
+import { test as base } from 'playwright-bdd';
+
+import coverageOptions from './mcr.config';
+
+export const test = base.extend<{
+  autoTestFixture: string;
+}>({
+  autoTestFixture: [
+    async ({ page }, use) => {
+      await Promise.all([
+          page.coverage.startJSCoverage({
+            resetOnNavigation: false,
+          }),
+        ]);
+      
+      await use('autoTestFixture');
+
+      const [jsCoverage] = await Promise.all([page.coverage.stopJSCoverage()]);
+      const coverageList = [...jsCoverage];
+      const mcr = MCR(coverageOptions);
+      await mcr.add(coverageList);
+      
+    },
+    {
+      scope: 'test',
+      auto: true,
+    },
+  ],
+});
+```
+
+#### `page.coverage.startJSCoverage`
+
+Cette fonction démarre la collecte de la couverture de code JavaScript pour la page. Elle prend un objet d'options en paramètre, où vous pouvez spécifier des options comme `resetOnNavigation` pour indiquer si la couverture doit être réinitialisée lors de la navigation.
+
+#### `page.coverage.stopJSCoverage`
+
+Cette fonction arrête la collecte de la couverture de code JavaScript et renvoie les données de couverture collectées. Ces données peuvent ensuite être utilisées pour générer des rapports de couverture de code.
+
+### Configuration des fichiers globaux
+Pour configurer les fichiers globaux nécessaires à votre projet de plus avec MCR, vous devez créer deux fichiers : global-setup.ts et global-teardown.ts. 
+Ces fichiers permettent de configurer et de nettoyer l'environnement de test avant et après l'exécution des tests respectivement. 
+
+#### `global-setup.ts`
+Ce fichier est utilisé pour configurer l'environnement de test avant l'exécution des tests. Par exemple, vous pouvez l'utiliser pour initialiser des variables d'environnement, configurer des connexions à des bases de données, etc.
+
+```typescript
+import MCR from 'monocart-coverage-reports';
+
+import coverageOptions from './mcr.config';
+
+async function globalSetup() {
+  const mcr = MCR(coverageOptions);
+  mcr.cleanCache();
+}
+
+export default globalSetup;
+```
+
+#### `global-teardown.ts`
+Ce fichier est utilisé pour nettoyer l'environnement de test après l'exécution des tests. Par exemple, vous pouvez l'utiliser pour fermer des connexions à des bases de données, supprimer des fichiers temporaires, etc.
+
+```typescript
+import MCR from 'monocart-coverage-reports';
+
+import coverageOptions from './mcr.config';
+
+async function globalTeardown() {
+  const mcr = MCR(coverageOptions);
+  await mcr.generate();
+}
+
+export default globalTeardown;
+
+```
 
 ### Configuration CI/CD avec GitHub Actions
 
@@ -408,21 +446,10 @@ jobs:
 
 Assurez-vous d’ajouter les secrets `GITHUB_USERNAME` et `GITHUB_TOKEN` dans les paramètres de votre dépôt GitHub (`Settings > Secrets and variables > Actions`).
 
-### Exécution des Tests
-
-Pour exécuter les tests localement, utilisez la commande suivante :
-
-```bash
-npx playwright test
-```
-
-Pour exécuter les tests localement avec l'interface utilisateur, utilisez la commande suivante :
-
-```bash
-npx playwright test --ui
-```
 
 ### Sources
+- [Playwright](https://playwright.dev/docs/intro)
+- [Playwright-Bdd](https://vitalets.github.io/playwright-bdd/#/)
 
 
 ### Contribuer
