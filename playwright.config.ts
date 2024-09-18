@@ -20,6 +20,7 @@ if(existsSync(envPath)){
 
 export default defineConfig({
 	testDir,
+
 	reporter: [
 		['list'],
 		cucumberReporter('junit', {
