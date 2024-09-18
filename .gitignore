@@ -19,3 +19,4 @@ cucumber-report
 /update.sh
 .auth
 coverage
+reports
