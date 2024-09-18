@@ -12,6 +12,7 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
 	testDir,
+
 	reporter: [
 		['list'],
 		cucumberReporter('junit', {
