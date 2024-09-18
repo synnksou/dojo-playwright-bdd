@@ -165,8 +165,8 @@ Then('I should be redirected to the sign-up page', async ({ page }) => {
 </details>
 
 #### Ajout du test d'authentification
-
-ATTENTION IL NE FAUT PAS AVOIR LA 2FA ACTIVER POUR LA FONCTION DE AUTH
+>[!WARNING]
+>IL NE FAUT PAS AVOIR LA 2FA ACTIVER POUR LA FONCTION DE AUTH, DESACTIVEZ LA POUR LE DOJO SINON FAITE UN @SKIP SUR LA FEATURE COMMIT
 
 Ici pour ce faire, vous avez plusieurs possibilité pour le mettre en place, si vous voulez mettre en place "before overall test" alors, il vaut mieux utilisé les globals setup.
 
