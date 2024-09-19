@@ -27,6 +27,14 @@ cd dojo-playwright
 
 ### 2. Installez les dépendances
 
+Installez PW
+
+```bash
+npx playwright install
+```
+
+Installez les autres deps
+
 ```bash
 npm install
 ```
