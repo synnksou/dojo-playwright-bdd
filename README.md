@@ -1,4 +1,4 @@
-# Dojo Playwright et Playwright-BDD
+# Dojo Playwright et Playwright-BDD (WIP V2)
 
 Bienvenue dans ce dojo où vous apprendrez à utiliser Playwright et Playwright-BDD pour tester des fonctionnalités sur GitHub. Vous allez configurer l'authentification, tester la création de commits sur vos propres dépôts, et intégrer le tout dans un pipeline CI/CD avec GitHub Actions.
 
