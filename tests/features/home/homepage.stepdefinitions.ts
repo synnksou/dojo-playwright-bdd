@@ -7,11 +7,11 @@ Given('I am on the Duende Demo home page', async ({ page }) => {
 });
 
 When('I fill in the Login input field', async ({ page }) => {
-	await page.locator('#Input_Username').fill('');
+	await page.locator('#Input_Username').fill('bob');
 });
 
 When('I fill in the Password input field', async ({ page }) => {
-	await page.locator('#Input_Password').fill('');
+	await page.locator('#Input_Password').fill('bob');
 });
 
 When('I click on the {string} button', async ({ page }, name: string) => {

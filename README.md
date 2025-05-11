@@ -6,13 +6,15 @@ Bienvenue dans ce dojo où vous apprendrez à utiliser Playwright et Playwright-
 
 1. **Tester la page Duende** : Utilisez Playwright pour automatiser les tests de la page d'accueil de GitHub.
 2. **Configurer l'authentification** : Mettez en place l'authentification pour accéder à vos dépôts privés.
-3. **Tester la création de commits** : Écrivez des tests pour vérifier la création de commits sur vos dépôts.
+3. **Tester du Profil** : Écrivez des tests pour vérifier la création de commits sur vos dépôts.
 4. **Tester le téléchargement du repo** : Écrivez des tests pour vérifier que le téléchargement du repo fonctionne.
-5. **Tester sur votre projet** : Essayez de tester une page sur votre application/projet.
-
+5. **Tester d'Accessibilité** : Testez l'accessibilité d'un site
+6. **Ajout du coverage** : Ajout du coverage
+7. 
 ## Prérequis
 
 - Node.js installé sur votre machine. (Node 18)
+- Connaissance de Js et Ts
 
 ## Installation
 
@@ -373,15 +375,18 @@ When('La page est entièrement chargée', async ({ page }) => {
 });
 
 Then('Toutes les images doivent avoir un attribut alt non vide', async ({ page }) => {
-  const images = page.getByRole('img');
-  const count = await images.count();
+	const imagesWithoutAlt = await page.evaluate(() => {
+		return Array.from(document.querySelectorAll('img'))
+			.filter(img => !img.hasAttribute('alt') || img.getAttribute('alt') === '')
+			.map(img => img.src); // pour log/debug
+	});
 
-  for (let i = 0; i < count; i++) {
-  const image = images.nth(i);
-  const alt = await image.getAttribute('alt');
-  expect(alt).toBeTruthy(); // Vérifie que l’attribut alt est présent et non vide
-  }
+	expect(imagesWithoutAlt.length).toBe(0);
 });
+
+[evaluate](https://playwright.dev/docs/api/class-worker#worker-evaluate)
+
+Vous pouvez utiliser aussi https://www.npmjs.com/package/axe-playwright
 
 ````
 
