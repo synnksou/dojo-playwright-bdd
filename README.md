@@ -175,7 +175,7 @@ Then('Je devrais voir le message {string}', async ({ page }, text: string) => {
 
 </details>
 
-#### Ajout du test d'authentification
+#### 🎯Ajout du test d'authentification persistante
 
 Ici pour ce faire, vous avez plusieurs possibilité pour le mettre en place, si vous voulez mettre en place "before overall test" alors, il vaut mieux utilisé les globals setup.
 
@@ -185,6 +185,18 @@ Dans la plupart des cas, les fixtures peuvent remplacer entièrement les hooks e
 Dans notre cas nous allons nous basé sur la simplicité, il faudra juste crée un fichier `auth.setup.ts`, ajoutez votre contexte d'authentification en playwright et l'ajouté en dépendence dans le fichier de config,
 
 Créez le ficher `auth.setup.ts`
+
+##### Etapes:
+
+1. Créer le fichier auth.setup.ts dans tests/utils/ :
+    * Scripter la connexion automatique à Duende et sauvegarder l'état avec storageState.
+
+2. Modifier playwright.config.ts :
+    * Ajouter un projet auth pour exécuter ce test en premier.
+    * Ajouter storageState: 'tests/.auth/user.json' dans les autres projets.
+
+<details>
+    <summary>Réponse</summary>
 
 ```typescript
 import { expect, test as setup } from '@playwright/test';
@@ -200,7 +212,7 @@ setup('authenticate', async ({ page }) => {
 
 	await page.locator('#Input_Password').fill(process.env.DUENDE_PASSWORD);
 
-  await page.getByRole('button', { name: 'Login' }).click();
+    await page.getByRole('button', { name: 'Login' }).click();
 
 	await page.context().storageState({ path: authFile });
 });
@@ -249,6 +261,8 @@ export default defineConfig({
 
 ```
 
+</details>
+
 Exemple d'image
 ![image](https://github.com/user-attachments/assets/c2597549-1ad7-4127-a1a3-469f756862df)
 
@@ -257,6 +271,14 @@ Exemple d'image
 #### 👤Test Profil Utilisateur
 
 Énoncé : Écrivez un test BDD avec Playwright pour vérifier que, lorsqu’un utilisateur authentifié accède à la page Diagnostics de Duende IdentityServer, il peut consulter les informations de son profil utilisateur. Sur le site https://demo.duendesoftware.com
+
+##### Etapes:
+
+1. Créer profile.feature dans tests/profile/ :
+    * Gherkin avec étapes "authentifié", navigation vers profil ("see the claims)" et vérifications.
+
+2. Créer profile.stepdefinitions.ts dans le même dossier :
+    * Utiliser la session persistée pour accéder au profil.
 
 <details>
     <summary>Réponse</summary>
@@ -269,15 +291,15 @@ Feature: Profil Duende
 
   Scenario: Vérification des informations du profil utilisateur
     Given Je suis authentifié sur le Duende
-    When Je navigue vers le profil de l'utilisateur
-    Then I should see the authentication cookie info
-    And I should see the claims data
+    When Je navigue vers le profil
+    Then Je devrais voir les cookies
+    And Je devrais voir les droits
 ```
 
 ```typescript
 import { Given, When, Then } from 'playwright-bdd';
 
-Given('Je suis authentifié sur le Duende diagnostics page', async ({ page }) => {
+Given('Je suis authentifié sur le Duende', async ({ page }) => {
   // TODO: Aller sur la page diagnostics en étant connecté
 	await page.goto('https://demo.duendesoftware.com');
 });
@@ -301,6 +323,17 @@ Then('Je devrais voir les droits', async ({ page }) => {
 #### 📦 Test de téléchargement GitHub
 
 Énoncé : Écrivez un test pour vérifier que l'utilisateur peut télécharger le repo "dojo-playwright-bdd" en cliquant sur le bouton "Download ZIP" et que le téléchargement est réussi.
+
+##### Etapes:
+
+1. Créer download.feature dans tests/download/ :
+    * Gherkin décrivant navigation et téléchargement.
+
+2. Créer download.stepdefinitions.ts :
+    * Utiliser waitForEvent('download') + fs pour vérifier que le fichier ZIP est téléchargé.
+    * Créer un dossier temporaire (temp/) pour les fichiers téléchargés.
+
+Lancer :
 
 <details>
 <summary>Réponse</summary>
@@ -349,6 +382,14 @@ Then('Le téléchargement est réussi', async ({ page }) => {
 #### ♿️ Test d'Accessibilité des images (attributs alt)
 
 Énoncé : Écrivez un test BDD avec Playwright pour vérifier que toutes les balises <img> présentes sur la page https://fake-university.com/news-and-events.html possèdent un attribut alt renseigné.
+
+##### Étapes :
+
+1. Créer accessibility.feature dans tests/accessibility/ :
+   * Gherkin décrivant chargement de la page et vérification des alt.
+
+2. Créer accessibility.stepdefinitions.ts :
+    * Utiliser page.evaluate() pour vérifier que chaque image a un alt non vide.
 
 <details>
 <summary>Réponse</summary>
