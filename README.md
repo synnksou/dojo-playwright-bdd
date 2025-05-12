@@ -79,7 +79,7 @@ Cela permet à Playwright de charger correctement vos scénarios BDD (Gherkin) e
 
 ![Arboresence de Structure]({6DAB1FC4-B7AF-471C-B28B-A5CB1B6621AF}.png)
 
-📁 `tests/features/`
+#### 📁 `tests/features/`
 C’est ici que tu places tous tes **scénarios BDD** écrits en Gherkin (`.feature`) ainsi que leurs définitions (`.stepdefinitions.ts`).
 
 Exemple :
@@ -88,7 +88,7 @@ Exemple :
 
 Cette organisation par **feature** permet de regrouper facilement les tests liés à une même fonctionnalité.
 
-📁 `tests/utils/`
+#### 📁 `tests/utils/`
 Ce dossier est destiné à des outils partagés ou des scripts de préparation, exemple :
  * `auth.setup.ts`: un fichier servant à créer un contexte d’authentification persistent utilisé dans les tests, par exemple via [`APIRequestContext`](https://playwright.dev/docs/api/class-apirequestcontext) et [`storageState`](https://playwright.dev/docs/api/class-apirequestcontext#api-request-context-storage-state).
 
@@ -423,7 +423,7 @@ Then('Je devrais voir les droits', async ({ page }) => {
     * Utiliser `waitForEvent('download')` + `fs` pour vérifier que le fichier ZIP est téléchargé.
     * Créer un dossier temporaire (temp/) pour les fichiers téléchargés.
 
-###### **📌 `waitForEvent`**
+###### **📌 waitForEvent**
 
 Playwright propose une API appelée `waitForEvent` qui permet d’attendre un événement spécifique.
 
