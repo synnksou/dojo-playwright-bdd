@@ -4,7 +4,7 @@ Bienvenue dans ce dojo où vous apprendrez à utiliser Playwright et Playwright-
 
 ## 🎯 Objectifs
 
-1. **Tester la page Duende** :  Vérifiez la redirection et les messages après une tentative de connexion.
+1. **Tester la page Duende Authentification** :  Vérifiez la redirection et les messages après une tentative de connexion.
 2. **Configurer l'authentification** : Mettez en place une session authentifiée persistante.
 3. **Teste du Profil** : Vérifiez que les informations de session sont visibles après login avec l'utilisation d'un setup.
 4. **Tester le téléchargement du repo** : Vérifiez que l’utilisateur peut télécharger le repo GitHub.
@@ -147,9 +147,9 @@ Ensuite utilisez la commande
 
 `npx bddgen` ou `npm run test` qui lance bddgen & playwright
 
-#### 🔁 Test Redirection Duende
+#### 🔁 Test Authentification Duende
 
-Énoncé :Écrivez un test end-to-end pour vérifier qu’un utilisateur est bien redirigé et voit un message spécifique après avoir tenté de se connecter à la page de démonstration Duende.
+Énoncé : Écrivez un test end-to-end pour vérifier qu’un utilisateur est bien redirigé et voit un message spécifique après avoir tenté de se connecter à la page de démonstration Duende.
 
 ##### Étapes :
 1. Créer le fichier `home.feature` dans tests/home/ :
@@ -270,6 +270,9 @@ Cette méthode consiste à utiliser un fichier de setup (auth.setup.ts) pour eff
 <details>
     <summary>Réponse</summary>
 
+
+📄 `tests/utils/auth.setup.ts`
+
 ```typescript
 import { expect, test as setup } from '@playwright/test';
 
@@ -280,9 +283,9 @@ setup('authenticate', async ({ page }) => {
 
 	await expect(page).toHaveTitle(/Duende IdentityServer/);
 
-	await page.locator('#Input_Username').fill(process.env.DUENDE_USERNAME);
+	await page.locator('#Input_Username').fill("bob");
 
-	await page.locator('#Input_Password').fill(process.env.DUENDE_PASSWORD);
+	await page.locator('#Input_Password').fill("bob");
 
     await page.getByRole('button', { name: 'Login' }).click();
 
@@ -313,7 +316,6 @@ setup('authenticate', async ({ request }) => {
 > C’est un objet fourni par Playwright permettant de faire des requêtes HTTP directement (POST, GET, etc.) sans ouvrir de navigateur.  
 > Il est idéal pour réaliser une authentification via une API, récupérer un token, puis sauvegarder le contexte utilisateur pour le réutiliser dans vos tests.
 
-
 Ensuite il suffit de l'ajouter dans la config Playwright dans le fichier `playwright.config.ts`
 
 ```typescript
@@ -336,7 +338,7 @@ export default defineConfig({
 
 ```
 
-🧠 **Pourquoi utiliser dependencies: `['auth']` ?**
+###### 🧠 **Pourquoi utiliser dependencies: `['auth']` ?**
 
 L’option dependencies permet de spécifier que le projet principal (chromium, ici) dépend du projet auth. Cela garantit que le projet auth est exécuté et terminé avant que chromium ne démarre ses tests.
 
@@ -372,7 +374,7 @@ Exemple d'image
     <summary>Réponse</summary>
 
 
-📄 tests/profile/profile.feature
+📄 `tests/profile/profile.feature`
 
 ```gherkin
 Feature: Profil Duende
@@ -384,6 +386,7 @@ Feature: Profil Duende
     And Je devrais voir les droits
 ```
 
+📄 `tests/profile/profile.stepdefinitions.ts`
 ```typescript
 import { Given, When, Then } from 'playwright-bdd';
 
@@ -420,7 +423,7 @@ Then('Je devrais voir les droits', async ({ page }) => {
     * Utiliser `waitForEvent('download')` + `fs` pour vérifier que le fichier ZIP est téléchargé.
     * Créer un dossier temporaire (temp/) pour les fichiers téléchargés.
 
-**📌 waitForEvent**
+###### **📌 `waitForEvent`**
 
 Playwright propose une API appelée `waitForEvent` qui permet d’attendre un événement spécifique.
 
@@ -444,8 +447,8 @@ Le module fs de Node.js permet de manipuler le système de fichiers, notamment p
 
 <details>
 <summary>Réponse</summary>
-    
-Gherkin 
+
+📄 `tests/download/download.feature`
 ```gherkin
 Feature: Téléchargement du repo
 
@@ -456,7 +459,7 @@ Feature: Téléchargement du repo
 
 ```
 
-Step.ts
+📄 `tests/download/download.stepdefinitions.ts`
 ```typescript
 import { expect } from '@playwright/test';
 import fs from 'fs';
@@ -507,7 +510,7 @@ CF [API Evaluate](https://playwright.dev/docs/api/class-worker#worker-evaluate)
 <details>
 <summary>Réponse</summary>
     
-Gherkin 
+📄 `tests/accessibility/accessibility.feature`
 ```gherkin
 Feature: Accessibilité des images
 
@@ -517,7 +520,7 @@ Feature: Accessibilité des images
     Then Toutes les images doivent avoir un attribut alt non vide
 ```
 
-Step.ts
+📄 `tests/accessibility/accessibility.stepdefinitions.ts`
 ```typescript
 const { Given, When, Then } = createBdd();
 
@@ -678,7 +681,6 @@ Exemple de coverage HTML
 
 - [Playwright](https://playwright.dev/docs/intro)
 - [Playwright-Bdd](https://vitalets.github.io/playwright-bdd/#/)
-
 
 ### 🙏 Remerciements
 
