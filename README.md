@@ -6,11 +6,10 @@ Bienvenue dans ce dojo où vous apprendrez à utiliser Playwright et Playwright-
 
 1. **Tester la page Duende** : Utilisez Playwright pour automatiser les tests de la page d'accueil de GitHub.
 2. **Configurer l'authentification** : Mettez en place l'authentification pour accéder à vos dépôts privés.
-3. **Tester du Profil** : Écrivez des tests pour vérifier la création de commits sur vos dépôts.
+3. **Teste du Profil** : Écrivez des tests pour vérifier la création de commits sur vos dépôts.
 4. **Tester le téléchargement du repo** : Écrivez des tests pour vérifier que le téléchargement du repo fonctionne.
 5. **Tester d'Accessibilité** : Testez l'accessibilité d'un site
 6. **Ajout du coverage** : Ajout du coverage
-7. 
 ## Prérequis
 
 - Node.js installé sur votre machine. (Node 18)
@@ -123,7 +122,7 @@ Ensuite utilisez la commande
 
 #### Test de la page Duende
 
-Énoncé : Écrivez un test pour vérifier que l'utilisateur est redirigé vers la page d'inscription après avoir rempli le champ email et cliqué sur le bouton "Sign up for GitHub".
+Énoncé :Écrivez un test end-to-end pour vérifier qu’un utilisateur est bien redirigé et voit un message spécifique après avoir tenté de se connecter à la page de démonstration Duende.
 
 <details>
     <summary>Réponse</summary>
@@ -255,7 +254,7 @@ Exemple d'image
 
 #### Test du profil
 
-Énoncé : Écrivez un test BDD avec Playwright pour vérifier que, lorsqu’un utilisateur authentifié accède à la page Diagnostics de Duende IdentityServer, il peut consulter les informations de son profil utilisateur.
+Énoncé : Écrivez un test BDD avec Playwright pour vérifier que, lorsqu’un utilisateur authentifié accède à la page Diagnostics de Duende IdentityServer, il peut consulter les informations de son profil utilisateur. Sur le site https://demo.duendesoftware.com
 
 <details>
     <summary>Réponse</summary>
@@ -299,7 +298,7 @@ Then('Je devrais voir les droits', async ({ page }) => {
 
 #### Test de création de téléchargement
 
-Énoncé : Écrivez un test pour vérifier que l'utilisateur peut télécharger le repo "dojo-playwright" en cliquant sur le bouton "Download ZIP" et que le téléchargement est réussi.
+Énoncé : Écrivez un test pour vérifier que l'utilisateur peut télécharger le repo "dojo-playwright-bdd" en cliquant sur le bouton "Download ZIP" et que le téléchargement est réussi.
 
 <details>
 <summary>Réponse</summary>
@@ -525,9 +524,17 @@ Exemple de coverage HTML
 
 - [Playwright](https://playwright.dev/docs/intro)
 - [Playwright-Bdd](https://vitalets.github.io/playwright-bdd/#/)
+- 
+### Remerciements
+
+Un grand merci à **Paul Plancq** (@pplanq) pour son accompagnement et ses retours techniques tout au long de ce dojo.  
+Merci également à **Olivier Sailly** (@Olisail) pour son soutien, ses conseils et son expertise précieuse.
+
+🙏 Votre contribution a largement participé à la qualité de ce projet.
+
 
 ### Contribuer
 
 Les contributions sont les bienvenues ! Veuillez ouvrir une issue ou une pull request pour toute suggestion ou amélioration.
     
-    Bonne chance avec votre dojo ! Si vous avez des questions ou des problèmes, n'hésitez pas à demander.
+Bonne chance avec votre dojo ! Si vous avez des questions ou des problèmes, n'hésitez pas à demander.
