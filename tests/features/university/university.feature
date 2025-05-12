@@ -1,6 +1,0 @@
-Feature: Accessibilité des images
-
-    Scenario: Vérifier que toutes les images ont un attribut alt
-        Given Je visite la page d'actualités et d'événements de la fausse université
-        When La page est entièrement chargée
-        Then Toutes les images doivent avoir un attribut alt non vide
