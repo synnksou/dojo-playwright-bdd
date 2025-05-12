@@ -1,31 +1,32 @@
-# Dojo Playwright et Playwright-BDD (WIP V2)
+# 🧪 Dojo Playwright & Playwright-BDD (WIP V2)
 
-Bienvenue dans ce dojo où vous apprendrez à utiliser Playwright et Playwright-BDD pour tester des fonctionnalités sur GitHub. Vous allez configurer l'authentification, tester la création de commits sur vos propres dépôts.
+Bienvenue dans ce dojo où vous apprendrez à utiliser Playwright et Playwright-BDD pour automatiser des tests end-to-end sur une application web. Vous mettrez en place une authentification persistante, testerez la connexion à une page sécurisée, la consultation d'un profil utilisateur, le téléchargement d’un dépôt GitHub, et vérifierez l’accessibilité ainsi que la couverture de vos tests.
 
-## Objectifs
+## 🎯 Objectifs
 
-1. **Tester la page Duende** : Utilisez Playwright pour automatiser les tests de la page d'accueil de GitHub.
-2. **Configurer l'authentification** : Mettez en place l'authentification pour accéder à vos dépôts privés.
-3. **Teste du Profil** : Écrivez des tests pour vérifier la création de commits sur vos dépôts.
-4. **Tester le téléchargement du repo** : Écrivez des tests pour vérifier que le téléchargement du repo fonctionne.
-5. **Tester d'Accessibilité** : Testez l'accessibilité d'un site
-6. **Ajout du coverage** : Ajout du coverage
-## Prérequis
+1. **Tester la page Duende** :  Vérifiez la redirection et les messages après une tentative de connexion.
+2. **Configurer l'authentification** : Mettez en place une session authentifiée persistante.
+3. **Teste du Profil** : Vérifiez que les informations de session sont visibles après login avec l'utilisation d'un setup.
+4. **Tester le téléchargement du repo** : Vérifiez que l’utilisateur peut télécharger le repo GitHub.
+5. **Tester d'Accessibilité** : Assurez-vous que toutes les images ont un alt.
+6. **Ajouter le coverage de code** : Générez un rapport de couverture pour vos tests.
+
+
+## ✅ Prérequis
 
 - Node.js installé sur votre machine. (Node 18)
 - Connaissance de Js et Ts
 
-## Installation
+## 🚀 Installation
 
 ### 1. Forkez le repo et clonez
 
 ```bash
 git clone https://github.com/votre-utilisateur/dojo-playwright-bdd.git
-cd dojo-playwright
+cd dojo-playwright-bdd
 ```
 
-### 2. Installez les dépendances
-
+### 2. Installer les dépendances
 Installez PW
 
 ```bash
@@ -72,7 +73,7 @@ export default defineConfig({
 
 [API Test configuration Playwright](https://playwright.dev/docs/test-configuration)
 
-### Exécution des Tests
+### 🧪 Exécution des tests
 
 Pour exécuter les tests localement, utilisez la commande suivante :
 
@@ -88,7 +89,8 @@ npx playwright test --ui
 
 ### Écriture des tests
 
-### Exemple d'utilisation Playwright-bdd
+
+#### Exemple d'utilisation Playwright-bdd
 
 Créez un fichier `.feature` dans le dossier `features`, par exemple `<nomDuComposant>/<nomDuFichier>.feature` :
 
@@ -120,7 +122,7 @@ Ensuite utilisez la commande
 
 `npx bddgen` ou `npm run test` qui lance bddgen & playwright
 
-#### Test de la page Duende
+#### 🔁 Test Redirection Duende
 
 Énoncé :Écrivez un test end-to-end pour vérifier qu’un utilisateur est bien redirigé et voit un message spécifique après avoir tenté de se connecter à la page de démonstration Duende.
 
@@ -252,7 +254,7 @@ Exemple d'image
 
 ......
 
-#### Test du profil
+#### 👤Test Profil Utilisateur
 
 Énoncé : Écrivez un test BDD avec Playwright pour vérifier que, lorsqu’un utilisateur authentifié accède à la page Diagnostics de Duende IdentityServer, il peut consulter les informations de son profil utilisateur. Sur le site https://demo.duendesoftware.com
 
@@ -296,7 +298,7 @@ Then('Je devrais voir les droits', async ({ page }) => {
 
 ......
 
-#### Test de création de téléchargement
+#### 📦 Test de téléchargement GitHub
 
 Énoncé : Écrivez un test pour vérifier que l'utilisateur peut télécharger le repo "dojo-playwright-bdd" en cliquant sur le bouton "Download ZIP" et que le téléchargement est réussi.
 
@@ -383,15 +385,14 @@ Then('Toutes les images doivent avoir un attribut alt non vide', async ({ page }
 	expect(imagesWithoutAlt.length).toBe(0);
 });
 
-[evaluate](https://playwright.dev/docs/api/class-worker#worker-evaluate)
-
-Vous pouvez utiliser aussi https://www.npmjs.com/package/axe-playwright
 
 ````
+[Evaluate](https://playwright.dev/docs/api/class-worker#worker-evaluate)
 
+Vous pouvez utiliser aussi https://www.npmjs.com/package/axe-playwright
 </details>
 
-## Coverage
+## 📊 Coverage (monocart)
 
 Pour générer des rapports de couverture de code, nous allons utiliser `monocart-coverage-reports`. Voici comment configurer la couverture de code dans votre projet.
 
@@ -445,9 +446,10 @@ Cette fonction démarre la collecte de la couverture de code JavaScript pour la 
 
 Cette fonction arrête la collecte de la couverture de code JavaScript et renvoie les données de couverture collectées. Ces données peuvent ensuite être utilisées pour générer des rapports de couverture de code.
 
-3. Configuration des fichiers globaux
-   Pour configurer les fichiers globaux nécessaires à votre projet de plus avec MCR, vous devez créer deux fichiers : global-setup.ts et global-teardown.ts.
-   Ces fichiers permettent de configurer et de nettoyer l'environnement de test avant et après l'exécution des tests respectivement.
+Configuration des fichiers globaux
+
+Pour configurer les fichiers globaux nécessaires à votre projet de plus avec MCR, vous devez créer deux fichiers : global-setup.ts et global-teardown.ts.
+Ces fichiers permettent de configurer et de nettoyer l'environnement de test avant et après l'exécution des tests respectivement.
 
 #### `global-setup.ts`
 
@@ -519,6 +521,22 @@ Exemple de coverage CLI
 Exemple de coverage HTML
 
 ![image](https://github.com/user-attachments/assets/8ec498c0-b846-44b0-b66c-46647193bdb0)
+
+
+#### 📁 Structure recommandée
+
+├── tests/
+│   ├── features/
+│   │   └── my-feature/
+│   │        ├──my-feature.feature
+│   │        └──my-feature.stepdefinitions.ts
+│   ├── utils/
+│   └── auth.setup.ts
+│   
+├── mcr.config.ts
+├── playwright.config.ts
+
+
 
 ### Sources
 
