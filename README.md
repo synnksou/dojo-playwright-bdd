@@ -525,24 +525,15 @@ Exemple de coverage HTML
 
 #### 📁 Structure recommandée
 
-├── tests/
-│   ├── features/
-│   │   └── my-feature/
-│   │        ├──my-feature.feature
-│   │        └──my-feature.stepdefinitions.ts
-│   ├── utils/
-│   └── auth.setup.ts
-│   
-├── mcr.config.ts
-├── playwright.config.ts
-
+![alt text]({6DAB1FC4-B7AF-471C-B28B-A5CB1B6621AF}.png)
 
 
 ### Sources
 
 - [Playwright](https://playwright.dev/docs/intro)
 - [Playwright-Bdd](https://vitalets.github.io/playwright-bdd/#/)
-- 
+
+
 ### Remerciements
 
 Un grand merci à **Paul Plancq** (@pplanq) pour son accompagnement et ses retours techniques tout au long de ce dojo.  
