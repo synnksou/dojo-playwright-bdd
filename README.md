@@ -126,6 +126,13 @@ Ensuite utilisez la commande
 
 Énoncé :Écrivez un test end-to-end pour vérifier qu’un utilisateur est bien redirigé et voit un message spécifique après avoir tenté de se connecter à la page de démonstration Duende.
 
+##### Étapes :
+1. Créer le fichier home.feature dans tests/home/ :
+    * Décrire le scénario Gherkin avec les étapes de connexion.
+
+2. Créer home.stepdefinitions.ts dans tests/home/ :
+    * Implémenter chaque étape (remplir le login, le mot de passe, cliquer, vérifier le message).
+
 <details>
     <summary>Réponse</summary>
 
