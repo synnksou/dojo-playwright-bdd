@@ -56,7 +56,7 @@ const testDir = defineBddConfig({
 
 [API CONFIG de Playwright-BDD](https://vitalets.github.io/playwright-bdd/#/configuration/options)
 
-Ensuite, pour continuer, il faudra ajouter ce `testDir` aux paramètres de la configuration Playwright :
+Ensuite, pour continuer, il faudra ajouter ce `testDir` aux paramètres de la configuration Playwright dans le fichier `playwright.config.ts`
 
 ```typescript
 export default defineConfig({
@@ -70,8 +70,13 @@ export default defineConfig({
     ],
 });
 ```
-
+(amener les liens)
 [API Test configuration Playwright](https://playwright.dev/docs/test-configuration)
+
+### 📁 Structure recommandée
+
+
+![alt text]({6DAB1FC4-B7AF-471C-B28B-A5CB1B6621AF}.png)
 
 ### 🧪 Exécution des tests
 
@@ -127,7 +132,7 @@ Ensuite utilisez la commande
 Énoncé :Écrivez un test end-to-end pour vérifier qu’un utilisateur est bien redirigé et voit un message spécifique après avoir tenté de se connecter à la page de démonstration Duende.
 
 ##### Étapes :
-1. Créer le fichier home.feature dans tests/home/ :
+1. Créer le fichier `home.feature` dans tests/home/ :
     * Décrire le scénario Gherkin avec les étapes de connexion.
 
 2. Créer home.stepdefinitions.ts dans tests/home/ :
@@ -184,23 +189,61 @@ Then('Je devrais voir le message {string}', async ({ page }, text: string) => {
 
 #### 🎯Ajout du test d'authentification persistante
 
-Ici pour ce faire, vous avez plusieurs possibilité pour le mettre en place, si vous voulez mettre en place "before overall test" alors, il vaut mieux utilisé les globals setup.
+##### 🔐 Mise en place de l’authentification persistante avec Playwright
 
-Sinon vous avez des hooks avec playwright-bdd comme `Before` ou `After` qui permette d'utilisé avant chaque scénario, ce sont les hooks mais bien que les hooks soient un concept bien connu, Playwright propose une meilleure alternative : les fixtures.
-Dans la plupart des cas, les fixtures peuvent remplacer entièrement les hooks et offrent de nombreux avantages. Par défaut, pensez toujours à utiliser les fixtures.
+Pour mettre en place une authentification persistante dans vos tests avec **Playwright**, plusieurs approches sont possibles, chacune avec ses avantages selon le contexte.
 
-Dans notre cas nous allons nous basé sur la simplicité, il faudra juste crée un fichier `auth.setup.ts`, ajoutez votre contexte d'authentification en playwright et l'ajouté en dépendence dans le fichier de config,
+ **✅ Option recommandée : Project Dependency (authentification avant tous les tests)**
+
+La méthode la plus propre et modulaire consiste à créer un projet spécifique dédié à l’authentification (via un fichier `auth.setup.ts`), puis à l’utiliser comme **dépendance** dans votre configuration. Cela permet d’exécuter l’authentification une seule fois **avant toute la suite de tests**, tout en gardant une architecture claire et scalable.
+
+**🔁 Alternative : Global Setup**
+
+Si vous ne souhaitez pas utiliser le système de projets multiples, vous pouvez opter pour le **global setup**, une fonction spéciale qui s’exécute une seule fois **avant tous les tests**. Elle est idéale pour effectuer des actions globales, comme la connexion à une application et la sauvegarde du contexte utilisateur ou encore du coverage.
+
+**🧩 Autre possibilité : Hooks (Before / After)**
+
+Si vous utilisez **playwright-bdd**, vous pouvez recourir aux **hooks** (`Before`, `After`) pour exécuter du code avant ou après chaque scénario. Cette approche fonctionne bien, mais elle implique que l’authentification se répète à chaque scénario, ce qui peut nuire à la performance.
+
+**💡 Meilleure pratique : Fixtures**
+
+Playwright propose une alternative plus puissante et flexible que les hooks : **les fixtures**. Elles permettent de gérer et partager un état (comme une session d’utilisateur) entre les tests, avec un meilleur contrôle sur leur cycle de vie. Les fixtures sont fortement recommandées par Playwright, car elles remplacent avantageusement les hooks en termes de lisibilité, modularité et maintenabilité.
+
+Dans notre cas nous allons rester sur la simplicité le `Project Dependency`.
+
+
+
+
+<br>
+<details>
+    <summary>  🧠 <b> À savoir – Petit rappel des concepts </b>: </summary>
+
+* **Hook (Before, After)** : Fonctions exécutées avant ou après chaque scénario. Pratiques pour des actions répétitives. Vous pouvez les retrouvez ici [Hooks](https://vitalets.github.io/playwright-bdd/#/writing-steps/hooks)
+* **BeforeAll / AfterAll** : Exécuté une seule fois avant/à la fin de tous les tests dans un fichier ou un projet.
+* **Global setup** : Exécuté une seule fois avant toute la suite de tests, idéal pour des configurations lourdes comme l’authentification, coverage.
+* **Project dependency** : Permet de structurer des dépendances entre projets de test
+* **Fixtures** : Systèmes de gestion d’état et de ressources partagées dans Playwright, remplaçant les hooks avec une approche plus modulaire.
+</details>
+</br>
+
+
+**Option : Project Dependency (la plus simple)**
+
+Cette méthode consiste à utiliser un fichier de setup (auth.setup.ts) pour effectuer l’authentification une fois, puis à injecter le contexte de session (cookies, localStorage, etc.) dans les tests via la configuration du projet.
 
 Créez le ficher `auth.setup.ts`
 
 ##### Etapes:
 
-1. Créer le fichier auth.setup.ts dans tests/utils/ :
+1. Créer le fichier `auth.setup.ts` dans tests/utils/ :
     * Scripter la connexion automatique à Duende et sauvegarder l'état avec storageState.
+      * Se connecter à l’application.
+      * Sauvegarder le contexte dans un fichier (auth.json par exemple).
 
-2. Modifier playwright.config.ts :
-    * Ajouter un projet auth pour exécuter ce test en premier.
-    * Ajouter storageState: 'tests/.auth/user.json' dans les autres projets.
+2. Modifier `playwright.config.ts` :
+   * Dans le fichier `playwright.config.ts`, créez un projet Playwright qui dépend de ce setup via dependencies.   
+     * Ajouter un projet auth pour exécuter ce test en premier.
+     *  Ajouter storageState: `tests/.auth/user.json` dans les autres projets.
 
 <details>
     <summary>Réponse</summary>
@@ -246,7 +289,9 @@ setup('authenticate', async ({ request }) => {
 
 [APIRequestContext](https://playwright.dev/docs/api/class-apirequestcontext)
 
-Ensuite il suffit de l'ajouter dans la config PW
+A EXPLIQUER
+
+Ensuite il suffit de l'ajouter dans la config Playwright
 
 ```typescript
 export default defineConfig({
@@ -273,18 +318,16 @@ export default defineConfig({
 Exemple d'image
 ![image](https://github.com/user-attachments/assets/c2597549-1ad7-4127-a1a3-469f756862df)
 
-......
-
 #### 👤Test Profil Utilisateur
 
 Énoncé : Écrivez un test BDD avec Playwright pour vérifier que, lorsqu’un utilisateur authentifié accède à la page Diagnostics de Duende IdentityServer, il peut consulter les informations de son profil utilisateur. Sur le site https://demo.duendesoftware.com
 
 ##### Etapes:
 
-1. Créer profile.feature dans tests/profile/ :
+1. Créer `profile.feature` dans tests/profile/ :
     * Gherkin avec étapes "authentifié", navigation vers profil ("see the claims)" et vérifications.
 
-2. Créer profile.stepdefinitions.ts dans le même dossier :
+2. Créer `profile.stepdefinitions.ts` dans le même dossier :
     * Utiliser la session persistée pour accéder au profil.
 
 <details>
@@ -308,19 +351,19 @@ import { Given, When, Then } from 'playwright-bdd';
 
 Given('Je suis authentifié sur le Duende', async ({ page }) => {
   // TODO: Aller sur la page diagnostics en étant connecté
-	await page.goto('https://demo.duendesoftware.com');
+    await page.goto('https://demo.duendesoftware.com');
 });
 
 When('Je navigue vers le profil', async ({ page }) => {
-  await page.getByRole('listitem').filter({ hasText: 'Click here to see the claims' }).getByRole('link').click();
+    await page.getByRole('listitem').filter({ hasText: 'Click here to see the claims' }).getByRole('link').click();
 });
 
 Then('Je devrais voir les cookies', async ({ page }) => {
-  await page.getByRole('heading', { name: 'Properties' }).click();
+    await page.getByRole('heading', { name: 'Properties' }).click();
 });
 
 Then('Je devrais voir les droits', async ({ page }) => {
-  await page.getByRole('heading', { name: 'Claims' }).click();
+    await page.getByRole('heading', { name: 'Claims' }).click();
 });
 ```
 </details>
@@ -333,11 +376,11 @@ Then('Je devrais voir les droits', async ({ page }) => {
 
 ##### Etapes:
 
-1. Créer download.feature dans tests/download/ :
+1. Créer `download.feature` dans tests/download/ :
     * Gherkin décrivant navigation et téléchargement.
 
-2. Créer download.stepdefinitions.ts :
-    * Utiliser waitForEvent('download') + fs pour vérifier que le fichier ZIP est téléchargé.
+2. Créer `download.stepdefinitions.ts` :
+    * Utiliser `waitForEvent('download')` + `fs` pour vérifier que le fichier ZIP est téléchargé.
     * Créer un dossier temporaire (temp/) pour les fichiers téléchargés.
 
 Lancer :
@@ -494,7 +537,7 @@ Cette fonction démarre la collecte de la couverture de code JavaScript pour la 
 
 Cette fonction arrête la collecte de la couverture de code JavaScript et renvoie les données de couverture collectées. Ces données peuvent ensuite être utilisées pour générer des rapports de couverture de code.
 
-Configuration des fichiers globaux
+### Configuration des fichiers globaux
 
 Pour configurer les fichiers globaux nécessaires à votre projet de plus avec MCR, vous devez créer deux fichiers : global-setup.ts et global-teardown.ts.
 Ces fichiers permettent de configurer et de nettoyer l'environnement de test avant et après l'exécution des tests respectivement.
@@ -569,12 +612,6 @@ Exemple de coverage CLI
 Exemple de coverage HTML
 
 ![image](https://github.com/user-attachments/assets/8ec498c0-b846-44b0-b66c-46647193bdb0)
-
-
-#### 📁 Structure recommandée
-
-![alt text]({6DAB1FC4-B7AF-471C-B28B-A5CB1B6621AF}.png)
-
 
 ### Sources
 
