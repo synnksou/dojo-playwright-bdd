@@ -41,11 +41,11 @@ npm install
 
 ## Configuration
 
-### Playwright et Playwright-BDD
+### 🧩 Playwright et Playwright-BDD
+Après avoir installé **Playwright** ainsi que les packages nécessaires à l’utilisation de Playwright-BDD, il est important de configurer correctement l’environnement de test.
 
-Après l'installation de Playwright et des packages, il faut configurer la configuration pour votre utilisation. Dans notre cas, avec Playwright-BDD, vous devriez modifier le `testDir` de Playwright de base.
-
-Ici, pour une configuration simpliste, on va juste donner le chemin pour les features et steps :
+#### 📁 Configuration de base avec `defineBddConfig`
+Lorsque vous utilisez Playwright-BDD, il faut spécifier où se trouvent vos fichiers `.feature` et leurs fichiers de définition de pas (`.stepdefinitions.ts`). Pour cela, on utilise la fonction `defineBddConfig` dans le fichier  `playwright.config.ts`:
 
 ```typescript
 const testDir = defineBddConfig({
@@ -54,14 +54,15 @@ const testDir = defineBddConfig({
 });
 ```
 
-[API CONFIG de Playwright-BDD](https://vitalets.github.io/playwright-bdd/#/configuration/options)
+[Voir la documentation officielle de playwright-bdd](https://vitalets.github.io/playwright-bdd/#/configuration/options)
 
-Ensuite, pour continuer, il faudra ajouter ce `testDir` aux paramètres de la configuration Playwright dans le fichier `playwright.config.ts`
+#### 🛠 Intégration dans la configuration globale `playwright.config.ts`
+
+Une fois votre `testDir` défini, il suffit de l’injecter dans la configuration Playwright principale :
 
 ```typescript
 export default defineConfig({
-    testDir, // Juste ici
-    ...
+    testDir, // Le répertoire défini avec defineBddConfig    ...
     projects: [
         {
             name: 'chromium',
@@ -70,13 +71,28 @@ export default defineConfig({
     ],
 });
 ```
-(amener les liens)
-[API Test configuration Playwright](https://playwright.dev/docs/test-configuration)
+[Voir la documentation officielle de Playwright sur la configuration](https://playwright.dev/docs/test-configuration)
+
+Cela permet à Playwright de charger correctement vos scénarios BDD (Gherkin) et leurs étapes associées au moment du lancement des tests.
 
 ### 📁 Structure recommandée
 
+![Arboresence de Structure]({6DAB1FC4-B7AF-471C-B28B-A5CB1B6621AF}.png)
 
-![alt text]({6DAB1FC4-B7AF-471C-B28B-A5CB1B6621AF}.png)
+📁 `tests/features/`
+C’est ici que tu places tous tes **scénarios BDD** écrits en Gherkin (`.feature`) ainsi que leurs définitions (`.stepdefinitions.ts`).
+
+Exemple :
+    * `my-feature.feature`: contient les scénarios de test (Given, When, Then…)
+    * `my-feature.stepdefinitions.ts` : contient l’implémentation de ces étapes en TypeScript ou Javascrippt via Playwright-BDD
+
+Cette organisation par **feature** permet de regrouper facilement les tests liés à une même fonctionnalité.
+
+📁 `tests/utils/`
+Ce dossier est destiné à des outils partagés ou des scripts de préparation, exemple :
+ * `auth.setup.ts`: un fichier servant à créer un contexte d’authentification persistent utilisé dans les tests, par exemple via [`APIRequestContext`](https://playwright.dev/docs/api/class-apirequestcontext) et [`storageState`](https://playwright.dev/docs/api/class-apirequestcontext#api-request-context-storage-state).
+
+Ce fichier peut être lancé via un projet Playwright dédié dans la config (avec la propriété `testMatch`).
 
 ### 🧪 Exécution des tests
 
@@ -116,6 +132,10 @@ const { Given, When, Then } = createBdd();
 
 Given('...', async ({ page }) => {
   ....
+});
+
+When('....', async ({ page }, title) => {
+....
 });
 
 Then('....', async ({ page }, title) => {
@@ -193,7 +213,7 @@ Then('Je devrais voir le message {string}', async ({ page }, text: string) => {
 
 Pour mettre en place une authentification persistante dans vos tests avec **Playwright**, plusieurs approches sont possibles, chacune avec ses avantages selon le contexte.
 
- **✅ Option recommandée : Project Dependency (authentification avant tous les tests)**
+**✅ Option recommandée : Project Dependency (authentification avant tous les tests)**
 
 La méthode la plus propre et modulaire consiste à créer un projet spécifique dédié à l’authentification (via un fichier `auth.setup.ts`), puis à l’utiliser comme **dépendance** dans votre configuration. Cela permet d’exécuter l’authentification une seule fois **avant toute la suite de tests**, tout en gardant une architecture claire et scalable.
 
@@ -210,9 +230,6 @@ Si vous utilisez **playwright-bdd**, vous pouvez recourir aux **hooks** (`Before
 Playwright propose une alternative plus puissante et flexible que les hooks : **les fixtures**. Elles permettent de gérer et partager un état (comme une session d’utilisateur) entre les tests, avec un meilleur contrôle sur leur cycle de vie. Les fixtures sont fortement recommandées par Playwright, car elles remplacent avantageusement les hooks en termes de lisibilité, modularité et maintenabilité.
 
 Dans notre cas nous allons rester sur la simplicité le `Project Dependency`.
-
-
-
 
 <br>
 <details>
@@ -231,8 +248,6 @@ Dans notre cas nous allons rester sur la simplicité le `Project Dependency`.
 
 Cette méthode consiste à utiliser un fichier de setup (auth.setup.ts) pour effectuer l’authentification une fois, puis à injecter le contexte de session (cookies, localStorage, etc.) dans les tests via la configuration du projet.
 
-Créez le ficher `auth.setup.ts`
-
 ##### Etapes:
 
 1. Créer le fichier `auth.setup.ts` dans tests/utils/ :
@@ -243,7 +258,14 @@ Créez le ficher `auth.setup.ts`
 2. Modifier `playwright.config.ts` :
    * Dans le fichier `playwright.config.ts`, créez un projet Playwright qui dépend de ce setup via dependencies.   
      * Ajouter un projet auth pour exécuter ce test en premier.
-     *  Ajouter storageState: `tests/.auth/user.json` dans les autres projets.
+     * Ajouter storageState: `tests/.auth/user.json` dans les autres projets.
+
+💾 **À quoi sert storageState ?**
+`storageState` est une option de configuration dans Playwright qui permet de charger un état de session précédemment sauvegardé. Ce fichier contient toutes les informations nécessaires à la simulation d’un utilisateur déjà connecté :
+   * Cookies,
+   * Local storage,
+   * Sessions,
+   * etc.
 
 <details>
     <summary>Réponse</summary>
@@ -287,31 +309,47 @@ setup('authenticate', async ({ request }) => {
 });
 ```
 
-[APIRequestContext](https://playwright.dev/docs/api/class-apirequestcontext)
+> 💡 Dans cette méthode, on utilise [`APIRequestContext`](https://playwright.dev/docs/api/class-apirequestcontext) :  
+> C’est un objet fourni par Playwright permettant de faire des requêtes HTTP directement (POST, GET, etc.) sans ouvrir de navigateur.  
+> Il est idéal pour réaliser une authentification via une API, récupérer un token, puis sauvegarder le contexte utilisateur pour le réutiliser dans vos tests.
 
-A EXPLIQUER
 
-Ensuite il suffit de l'ajouter dans la config Playwright
+Ensuite il suffit de l'ajouter dans la config Playwright dans le fichier `playwright.config.ts`
 
 ```typescript
 export default defineConfig({
 	testDir,
-	....
+	...,
 	projects: [
 		{
-			name: 'auth', // le projet auth qui lance auth.setup
+			name: 'auth',
 			testMatch: '**/auth.setup.ts',
 			testDir: 'tests/utils',
 		},
 		{
 			name: 'chromium',
 			use: { ...devices['Desktop Chrome'], storageState: 'tests/.auth/user.json' },
-			dependencies: ['auth'], // On ajoute la dépendence du projet "auth" qui se lance en before avant les autres
+			dependencies: ['auth'],
 		},
 	],
 });
 
 ```
+
+🧠 **Pourquoi utiliser dependencies: `['auth']` ?**
+
+L’option dependencies permet de spécifier que le projet principal (chromium, ici) dépend du projet auth. Cela garantit que le projet auth est exécuté et terminé avant que chromium ne démarre ses tests.
+
+Ce mécanisme est crucial lorsque vous avez besoin :
+
+* d’effectuer une authentification une seule fois,
+
+* de sauvegarder un état de session (storageState),
+
+* et de le réutiliser dans tous les autres projets de test.
+
+✅ En déclarant cette dépendance, vous assurez que tous vos tests bénéficient d’un contexte utilisateur déjà authentifié, sans avoir à refaire l’authentification à chaque test.
+
 
 </details>
 
@@ -368,7 +406,6 @@ Then('Je devrais voir les droits', async ({ page }) => {
 ```
 </details>
 
-......
 
 #### 📦 Test de téléchargement GitHub
 
@@ -383,7 +420,27 @@ Then('Je devrais voir les droits', async ({ page }) => {
     * Utiliser `waitForEvent('download')` + `fs` pour vérifier que le fichier ZIP est téléchargé.
     * Créer un dossier temporaire (temp/) pour les fichiers téléchargés.
 
-Lancer :
+**📌 waitForEvent**
+
+Playwright propose une API appelée `waitForEvent` qui permet d’attendre un événement spécifique.
+
+Cela suspendra l'exécution jusqu'à ce qu'un téléchargement démarre (clic sur un lien de téléchargement, bouton, etc.)
+
+CF [API Download Playwright](https://playwright.dev/docs/api/class-download)
+CF [API waitForEvent](https://playwright.dev/docs/api/class-websocket#web-socket-wait-for-event)
+
+Exemple :
+```typescript
+const download = await page.waitForEvent('download');
+```
+
+**📦 fs (File System)**
+Le module fs de Node.js permet de manipuler le système de fichiers, notamment pour :
+   * Vérifier si un fichier a bien été téléchargé,
+   * Lire, déplacer ou supprimer des fichiers,
+   * Gérer un dossier temporaire pour stocker les fichiers téléchargés (ex: temp/).
+  
+
 
 <details>
 <summary>Réponse</summary>
@@ -402,7 +459,6 @@ Feature: Téléchargement du repo
 Step.ts
 ```typescript
 import { expect } from '@playwright/test';
-import { Given, When, Then } from '../../utils';
 import fs from 'fs';
 
 const PATH = './temp/';
@@ -435,11 +491,18 @@ Then('Le téléchargement est réussi', async ({ page }) => {
 
 ##### Étapes :
 
-1. Créer accessibility.feature dans tests/accessibility/ :
+1. Créer `accessibility.feature` dans tests/accessibility/ :
    * Gherkin décrivant chargement de la page et vérification des alt.
 
-2. Créer accessibility.stepdefinitions.ts :
-    * Utiliser page.evaluate() pour vérifier que chaque image a un alt non vide.
+2. Créer `accessibility.stepdefinitions.ts` :
+    * Utiliser `page.evaluate()` pour vérifier que chaque image a un alt non vide.
+
+**🔍 À quoi sert page.evaluate() dans ce test ?**
+La méthode `page.evaluate()` de Playwright permet d’exécuter du JavaScript directement dans le contexte du navigateur, comme si vous étiez dans la console DevTools.
+Cela signifie que vous pouvez interagir directement avec le DOM de la page, récupérer ou manipuler des éléments, ou effectuer des vérifications complexes.
+
+CF [API Evaluate](https://playwright.dev/docs/api/class-worker#worker-evaluate)
+
 
 <details>
 <summary>Réponse</summary>
@@ -456,14 +519,14 @@ Feature: Accessibilité des images
 
 Step.ts
 ```typescript
-const { Given, Then } = createBdd();
+const { Given, When, Then } = createBdd();
 
 Given("Je visite la page d'actualités et d'événements de la fausse université", async ({ page }) => {
 	await page.goto('https://fake-university.com/news-and-events.html');
 });
 
 When('La page est entièrement chargée', async ({ page }) => {
-  await page.getByRole('heading', { name: 'News & Events' }).click();
+	await page.getByRole('heading', { name: 'News & Events' }).click();
 });
 
 Then('Toutes les images doivent avoir un attribut alt non vide', async ({ page }) => {
@@ -475,13 +538,11 @@ Then('Toutes les images doivent avoir un attribut alt non vide', async ({ page }
 
 	expect(imagesWithoutAlt.length).toBe(0);
 });
+```
 
+**📦 Alternative : axe-playwright**
 
-````
-[Evaluate](https://playwright.dev/docs/api/class-worker#worker-evaluate)
-
-Vous pouvez utiliser aussi https://www.npmjs.com/package/axe-playwright
-</details>
+Vous pouvez aussi utiliser la librairie axe-playwright pour faire des audits d’accessibilité automatisés. Elle détecte les problèmes d’accessibilité courants, y compris l'absence d'attributs alt, et fournit des rapports détaillés.
 
 ## 📊 Coverage (monocart)
 
@@ -619,13 +680,12 @@ Exemple de coverage HTML
 - [Playwright-Bdd](https://vitalets.github.io/playwright-bdd/#/)
 
 
-### Remerciements
+### 🙏 Remerciements
 
-Un grand merci à **Paul Plancq** (@pplanq) pour son accompagnement et ses retours techniques tout au long de ce dojo.  
-Merci également à **Olivier Sailly** (@Olisail) pour son soutien, ses conseils et son expertise précieuse.
+Un grand merci à **Paul Plancq** ([@pplanq](https://www.github.com/pplanq)) pour son accompagnement et ses retours techniques tout au long de ce dojo/codelab.  
+Merci également à **Olivier Sailly** ([@Olisail](https://www.github.com/Olisail)) pour son soutien, ses conseils et son expertise précieuse.
 
-🙏 Votre contribution a largement participé à la qualité de ce projet.
-
+Votre contribution a largement participé à la qualité de ce projet !
 
 ### Contribuer
 
