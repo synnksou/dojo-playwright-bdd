@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { Given, When, Then } from '../../utils';
+import { Given, When, Then } from '@utils/fixtures';
 import fs from 'fs';
 
 const PATH = './temp/';

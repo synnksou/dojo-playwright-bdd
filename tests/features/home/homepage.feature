@@ -1,8 +1,8 @@
-Feature: Duende Home Page
+Feature: Page d'accueil Duende
 
-    Scenario: Check Redirection
-        Given I am on the Duende Demo home page
-        When I fill in the Login input field
-        When I fill in the Password input field
-        And I click on the "Login" button
-        Then I should see the message "Authentication Cookie"
+    Scenario: Vérifier la redirection
+        Given Je suis sur la page d'accueil de Duende
+        When Je remplis le champ de saisie Login
+        And Je remplis le champ de saisie du mot de passe
+        And Je clique sur le bouton "Login"
+        Then Je devrais voir le message "Authentication Cookie"

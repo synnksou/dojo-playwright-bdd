@@ -143,15 +143,7 @@ Then('....', async ({ page }, title) => {
 });
 ```
 
-<<<<<<< HEAD
-Ensuite utilisez la commande
-
-`npx bddgen` ou `npm run test` qui lance bddgen & playwright
-
-#### 🔁 Test Redirection Duende
-=======
 #### Test de la page GitHub
->>>>>>> 7a59d8d (ci(PW): add pw test on github action)
 
 Énoncé :Écrivez un test end-to-end pour vérifier qu’un utilisateur est bien redirigé et voit un message spécifique après avoir tenté de se connecter à la page de démonstration Duende.
 
@@ -667,12 +659,6 @@ const coverageOptions: CoverageReportOptions = {
 	outputDir: './coverage/playwright',
 };
 
-<<<<<<< HEAD
-export default coverageOptions;
-```
-
-Exemple de coverage CLI
-=======
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -697,7 +683,6 @@ jobs:
 ```
 
 Assurez-vous d’ajouter les secrets `GITHUB_USERNAME` et `GITHUB_PASSWORD` dans les paramètres de votre dépôt GitHub (`Settings > Secrets and variables > Actions`).
->>>>>>> 7a59d8d (ci(PW): add pw test on github action)
 
 ![image](https://github.com/user-attachments/assets/c26ae8b2-7994-4d69-94d0-68fe58c04916)
 

@@ -1,23 +1,23 @@
 import { expect } from '@playwright/test';
-import { Given, When, Then } from '../../utils/fixtures';
+import { Given, When, Then } from '@utils/fixtures';
 
-Given('I am on the Duende Demo home page', async ({ page }) => {
+Given("Je suis sur la page d'accueil de Duende", async ({ page }) => {
 	await page.goto('https://demo.duendesoftware.com/diagnostics');
 	await expect(page).toHaveTitle(/Duende IdentityServer/);
 });
 
-When('I fill in the Login input field', async ({ page }) => {
+When('Je remplis le champ de saisie Login', async ({ page }) => {
 	await page.locator('#Input_Username').fill('bob');
 });
 
-When('I fill in the Password input field', async ({ page }) => {
+When('Je remplis le champ de saisie du mot de passe', async ({ page }) => {
 	await page.locator('#Input_Password').fill('bob');
 });
 
-When('I click on the {string} button', async ({ page }, name: string) => {
-	await page.getByRole('button', { name }).first().click();
+When('Je clique sur le bouton "Login"', async ({ page }) => {
+	await page.getByRole('button', { name: 'Login' }).click();
 });
 
-Then('I should see the message {string}', async ({ page }, text: string) => {
+Then('Je devrais voir le message {string}', async ({ page }, text: string) => {
 	await page.getByText(text).isVisible();
 });

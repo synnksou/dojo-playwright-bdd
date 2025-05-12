@@ -1,8 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
-import { config } from 'dotenv';
-import { existsSync } from 'fs';
-import path from 'path';
 
 const testDir = defineBddConfig({
 	features: 'tests/features/**/*.feature',
@@ -12,11 +9,6 @@ const testDir = defineBddConfig({
 		importTestFrom: true,
 	},
 });
-
-const envPath = path.resolve(__dirname, '.env');
-if(existsSync(envPath)){
-	config({ path: envPath });
-}
 
 export default defineConfig({
 	testDir,
