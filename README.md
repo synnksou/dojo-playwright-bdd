@@ -1,56 +1,6 @@
 # Test du Profil
 
-### 🧪 Exécution des tests
-
-Pour exécuter les tests localement, utilisez la commande suivante :
-
-```bash
-npx playwright test
-```
-
-Pour exécuter les tests localement avec l'interface utilisateur, utilisez la commande suivante :
-
-```bash
-npx playwright test --ui
-```
-
-### Exemple d'utilisation Playwright-bdd
-
-Créez un fichier `.feature` dans le dossier `features`, par exemple `<nomDuComposant>/<nomDuFichier>.feature` :
-
-```gherkin
-Feature: Gestion du panier
-
-  Scenario: Ajout d'un produit dans le panier
-....
-```
-
-Créez le fichier de définition des étapes correspondant dans `features/<nomDuComposant>/<nomDuFichier>.stepdefinitions.tsx` :
-
-```typescript
-import { createBdd } from 'playwright-bdd';
-import { expect } from '@playwright/test';
-
-const { Given, When, Then } = createBdd();
-
-Given('...', async ({ page }) => {
-  ....
-});
-
-When('....', async ({ page }, title) => {
-....
-});
-
-Then('....', async ({ page }, title) => {
-....
-});
-```
-
-Ensuite utilisez la commande
-
-`npx bddgen` ou `npm run test` qui lance bddgen & playwright
-
-#### 🔁 Test d'affichage de la Page Duende
+### 🔁 Test d'affichage de la Page Duende
 
 Vérifier que lorsqu’un utilisateur accède à la page https://demo.duendesoftware.com/, un texte spécifique comme "Welcome to the IdentityServer demo" est bien affiché.
 
@@ -97,8 +47,22 @@ Then("Je devrais voir le texte {string}", async ({ page }, expectedText: string)
 });
 
 ```
-
 </details>
 
+### 🧪 Exécution des tests
 
-[https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-two](➡️ Passer à l'exercice suivant – branche dojo/step-two)
+Pour exécuter les tests localement, utilisez la commande suivante :
+
+```bash
+npx playwright test
+```
+
+Pour exécuter les tests localement avec l'interface utilisateur, utilisez la commande suivante :
+
+```bash
+npx playwright test --ui
+```
+
+
+
+[https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-two]( ➡️ Passer à l'exercice suivant – branche dojo/step-two)
