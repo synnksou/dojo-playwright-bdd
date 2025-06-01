@@ -51,6 +51,12 @@ Then("Je devrais voir le texte {string}", async ({ page }, expectedText: string)
 
 ### 🧪 Exécution des tests
 
+Tout d'abort il vous faudras generer les tests ! en utilisant cette commande:
+
+```bash
+npx bddgen
+```
+
 Pour exécuter les tests localement, utilisez la commande suivante :
 
 ```bash
@@ -63,6 +69,18 @@ Pour exécuter les tests localement avec l'interface utilisateur, utilisez la co
 npx playwright test --ui
 ```
 
+Pour le codelab, deux commandes sont prète à l'utilisation :
+
+```bash
+npm run watch:bdd
+```
+
+et
+
+```bash
+npm run watch:pw
+```
 
 
-[https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-two]( ➡️ Passer à l'exercice suivant – branche dojo/step-two)
+➡️ Passer à l'exercice suivant
+[https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-two](branche dojo/step-two)
