@@ -1,86 +1,52 @@
-# Test du Profil
+# 👤Test Profil Utilisateur
 
-### 🔁 Test d'affichage de la Page Duende
+Énoncé : Écrivez un test BDD avec Playwright pour vérifier que, lorsqu’un utilisateur authentifié accède à la page Diagnostics de Duende IdentityServer, il peut consulter les informations de son profil utilisateur. Sur le site https://demo.duendesoftware.com
 
-Vérifier que lorsqu’un utilisateur accède à la page https://demo.duendesoftware.com/, un texte spécifique comme "Welcome to the IdentityServer demo" est bien affiché.
+## Etapes:
 
-##### Étapes :
-1. Créer le fichier `home.feature` dans `tests/features/home/` :
-    * Écrire un scénario Gherkin décrivant l'accès à la page d’accueil de Duende et la vérification d’un texte affiché.
+1. Créer `profile.feature` dans `tests/profile/` :
+    * Gherkin avec étapes "authentifié", navigation vers profil ("see the claims)" et vérifications.
 
-2. Créer `home.stepdefinitions.ts` dans `tests/features/home/` :
-    * Implémenter les étapes suivantes :
-      * Aller sur la page https://demo.duendesoftware.com/
-      * Attendre que la page soit complètement chargée
-      * Vérifier qu’un message spécifique (ex. : "Welcome to Duende IdentityServer") est affiché
+2. Créer `profile.stepdefinitions.ts` dans le même dossier :
+    * Utiliser la session persistée pour accéder au profil.
 
 <details>
     <summary>Réponse</summary>
 
-Créez un fichier de test sous `tests/home/home.stepdefinitions.ts` et votre premier Gherkin dans `tests/home/home.feature` :
 
-**`tests/home/home.feature`** :
+📄 tests/profile/profile.feature
 
 ```gherkin
-Feature: Accès à la page d'accueil Duende
+Feature: Profil Duende
 
-    Scenario: L'utilisateur voit le contenu de la page d'accueil
-        Given Je suis sur la page d'accueil de Duende
-        When La page est complètement chargée
-        Then Je devrais voir le titre "Welcome to Duende"
+  Scenario: Vérification des informations du profil utilisateur
+    Given Je suis authentifié sur le Duende
+    When Je navigue vers le profil
+    Then Je devrais voir les cookies
+    And Je devrais voir les droits
 ```
 
-**`tests/home/home.stepdefinitions.ts`** :
-
 ```typescript
-Given("Je suis sur la page d'accueil de Duende", async ({ page }) => {
-  await page.goto('https://demo.duendesoftware.com/');
+
+import { Given, When, Then } from '@utils/fixtures';
+
+Given('Je suis authentifié sur le Duende', async ({ page }) => {
+	await page.goto('https://demo.duendesoftware.com');
 });
 
-When("La page est complètement chargée", async ({ page }) => {
-  await page.waitForLoadState('domcontentloaded');
+When('Je navigue vers le profil', async ({ page }) => {
+	await page.getByRole('link', { name: 'Go ' }).nth(1).click();
 });
 
-Then("Je devrais voir le texte {string}", async ({ page }, expectedText: string) => {
-  const isVisible = await page.getByText(expectedText, { exact: false }).isVisible();
-  expect(isVisible).toBeTruthy();
+Then('Je devrais voir les cookies', async ({ page }) => {
+	await page.getByRole('heading', { name: 'Properties' }).click();
+});
+
+Then('Je devrais voir les droits', async ({ page }) => {
+	await page.getByRole('heading', { name: 'Claims' }).click();
 });
 
 ```
 </details>
-
-### 🧪 Exécution des tests
-
-Tout d'abort il vous faudras generer les tests ! en utilisant cette commande:
-
-```bash
-npx bddgen
-```
-
-Pour exécuter les tests localement, utilisez la commande suivante :
-
-```bash
-npx playwright test
-```
-
-Pour exécuter les tests localement avec l'interface utilisateur, utilisez la commande suivante :
-
-```bash
-npx playwright test --ui
-```
-
-Pour le codelab, deux commandes sont prète à l'utilisation :
-
-```bash
-npm run watch:bdd
-```
-
-et
-
-```bash
-npm run watch:pw
-```
-
-
-➡️ Passer à l'exercice suivant
-[https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-two](branche dojo/step-two)
+    
+[➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-four/README.md)
