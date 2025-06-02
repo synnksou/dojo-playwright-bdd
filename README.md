@@ -1,52 +1,79 @@
-# 👤Test Profil Utilisateur
+# 📦 Test de téléchargement GitHub
 
-Énoncé : Écrivez un test BDD avec Playwright pour vérifier que, lorsqu’un utilisateur authentifié accède à la page Diagnostics de Duende IdentityServer, il peut consulter les informations de son profil utilisateur. Sur le site https://demo.duendesoftware.com
+Énoncé : Écrivez un test pour vérifier que l'utilisateur peut télécharger le repo "dojo-playwright-bdd" en cliquant sur le bouton "Download ZIP" et que le téléchargement est réussi.
 
 ## Etapes:
 
-1. Créer `profile.feature` dans `tests/profile/` :
-    * Gherkin avec étapes "authentifié", navigation vers profil ("see the claims)" et vérifications.
+1. Créer `download.feature` dans tests/download/ :
+    * Gherkin décrivant navigation et téléchargement.
 
-2. Créer `profile.stepdefinitions.ts` dans le même dossier :
-    * Utiliser la session persistée pour accéder au profil.
+2. Créer `download.stepdefinitions.ts` :
+    * Utiliser `waitForEvent('download')` + `fs` pour vérifier que le fichier ZIP est téléchargé.
+    * Créer un dossier temporaire (temp/) pour les fichiers téléchargés.
 
-<details>
-    <summary>Réponse</summary>
+###### **📌 waitForEvent**
 
+Playwright propose une API appelée `waitForEvent` qui permet d’attendre un événement spécifique.
 
-📄 tests/profile/profile.feature
+Cela suspendra l'exécution jusqu'à ce qu'un téléchargement démarre (clic sur un lien de téléchargement, bouton, etc.)
 
-```gherkin
-Feature: Profil Duende
+CF [API Download Playwright](https://playwright.dev/docs/api/class-download)
+CF [API waitForEvent](https://playwright.dev/docs/api/class-websocket#web-socket-wait-for-event)
 
-  Scenario: Vérification des informations du profil utilisateur
-    Given Je suis authentifié sur le Duende
-    When Je navigue vers le profil
-    Then Je devrais voir les cookies
-    And Je devrais voir les droits
+Exemple :
+```typescript
+const download = await page.waitForEvent('download');
 ```
 
+**📦 fs (File System)**
+Le module fs de Node.js permet de manipuler le système de fichiers, notamment pour :
+   * Vérifier si un fichier a bien été téléchargé,
+   * Lire, déplacer ou supprimer des fichiers,
+   * Gérer un dossier temporaire pour stocker les fichiers téléchargés (ex: temp/).
+  
+
+
+<details>
+<summary>Réponse</summary>
+
+📄 `tests/download/download.feature`
+```gherkin
+Feature: Téléchargement du repo
+
+    Scenario: Télécharger le repo GitHub
+        Given Je suis la page du repo
+        When Je télécharge le repo
+        Then Le téléchargement est réussi
+
+```
+
+📄 `tests/download/download.stepdefinitions.ts`
 ```typescript
+import { expect } from '@playwright/test';
+import fs from 'fs';
 
-import { Given, When, Then } from '@utils/fixtures';
+const PATH = './temp/';
+let downloadFile: any;
 
-Given('Je suis authentifié sur le Duende', async ({ page }) => {
-	await page.goto('https://demo.duendesoftware.com');
+Given('Je suis la page du repo', async ({ page }) => {
+	await page.goto('https://github.com/synnksou/dojo-playwright-bdd');
 });
 
-When('Je navigue vers le profil', async ({ page }) => {
-	await page.getByRole('link', { name: 'Go ' }).nth(1).click();
+When('Je télécharge le repo', async ({ page }, email) => {
+	await page.getByRole('button', { name: 'Code' }).click();
+	const downloadPromise = page.waitForEvent('download');
+	await page.getByLabel('Download ZIP').click();
+	const download = await downloadPromise;
+	downloadFile = download.suggestedFilename();
+	await download.saveAs(PATH + downloadFile);
 });
 
-Then('Je devrais voir les cookies', async ({ page }) => {
-	await page.getByRole('heading', { name: 'Properties' }).click();
-});
-
-Then('Je devrais voir les droits', async ({ page }) => {
-	await page.getByRole('heading', { name: 'Claims' }).click();
+Then('Le téléchargement est réussi', async ({ page }) => {
+	await expect(fs.promises.stat(PATH + downloadFile)).resolves.not.toBeNull();
+	await fs.promises.unlink(PATH + downloadFile);
 });
 
 ```
 </details>
-    
-[➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-four/README.md)
+
+[➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-five/README.md)
