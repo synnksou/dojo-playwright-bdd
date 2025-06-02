@@ -1,79 +1,59 @@
-# 📦 Test de téléchargement GitHub
+# ♿️ Test d'Accessibilité des images (attributs alt)
 
-Énoncé : Écrivez un test pour vérifier que l'utilisateur peut télécharger le repo "dojo-playwright-bdd" en cliquant sur le bouton "Download ZIP" et que le téléchargement est réussi.
+Énoncé : Écrivez un test BDD avec Playwright pour vérifier que toutes les balises <img> présentes sur la page https://fake-university.com/news-and-events.html possèdent un attribut alt renseigné.
 
-## Etapes:
+##### Étapes :
 
-1. Créer `download.feature` dans tests/download/ :
-    * Gherkin décrivant navigation et téléchargement.
+1. Créer `accessibility.feature` dans tests/accessibility/ :
+   * Gherkin décrivant chargement de la page et vérification des alt.
 
-2. Créer `download.stepdefinitions.ts` :
-    * Utiliser `waitForEvent('download')` + `fs` pour vérifier que le fichier ZIP est téléchargé.
-    * Créer un dossier temporaire (temp/) pour les fichiers téléchargés.
+2. Créer `accessibility.stepdefinitions.ts` :
+    * Utiliser `page.evaluate()` pour vérifier que chaque image a un alt non vide.
 
-###### **📌 waitForEvent**
+**🔍 À quoi sert page.evaluate() dans ce test ?**
+La méthode `page.evaluate()` de Playwright permet d’exécuter du JavaScript directement dans le contexte du navigateur, comme si vous étiez dans la console DevTools.
+Cela signifie que vous pouvez interagir directement avec le DOM de la page, récupérer ou manipuler des éléments, ou effectuer des vérifications complexes.
 
-Playwright propose une API appelée `waitForEvent` qui permet d’attendre un événement spécifique.
-
-Cela suspendra l'exécution jusqu'à ce qu'un téléchargement démarre (clic sur un lien de téléchargement, bouton, etc.)
-
-CF [API Download Playwright](https://playwright.dev/docs/api/class-download)
-CF [API waitForEvent](https://playwright.dev/docs/api/class-websocket#web-socket-wait-for-event)
-
-Exemple :
-```typescript
-const download = await page.waitForEvent('download');
-```
-
-**📦 fs (File System)**
-Le module fs de Node.js permet de manipuler le système de fichiers, notamment pour :
-   * Vérifier si un fichier a bien été téléchargé,
-   * Lire, déplacer ou supprimer des fichiers,
-   * Gérer un dossier temporaire pour stocker les fichiers téléchargés (ex: temp/).
-  
-
+CF [API Evaluate](https://playwright.dev/docs/api/class-worker#worker-evaluate)
 
 <details>
 <summary>Réponse</summary>
-
-📄 `tests/download/download.feature`
+    
+Gherkin 
 ```gherkin
-Feature: Téléchargement du repo
+Feature: Accessibilité des images
 
-    Scenario: Télécharger le repo GitHub
-        Given Je suis la page du repo
-        When Je télécharge le repo
-        Then Le téléchargement est réussi
-
+  Scenario: Vérifier que toutes les images ont un attribut alt
+    Given Je visite la page d'actualités et d'événements de la fausse université
+    When La page est entièrement chargée   
+    Then Toutes les images doivent avoir un attribut alt non vide
 ```
 
-📄 `tests/download/download.stepdefinitions.ts`
+Step.ts
 ```typescript
-import { expect } from '@playwright/test';
-import fs from 'fs';
+const { Given, When, Then } = createBdd();
 
-const PATH = './temp/';
-let downloadFile: any;
-
-Given('Je suis la page du repo', async ({ page }) => {
-	await page.goto('https://github.com/synnksou/dojo-playwright-bdd');
+Given("Je visite la page d'actualités et d'événements de la fausse université", async ({ page }) => {
+	await page.goto('https://fake-university.com/news-and-events.html');
 });
 
-When('Je télécharge le repo', async ({ page }, email) => {
-	await page.getByRole('button', { name: 'Code' }).click();
-	const downloadPromise = page.waitForEvent('download');
-	await page.getByLabel('Download ZIP').click();
-	const download = await downloadPromise;
-	downloadFile = download.suggestedFilename();
-	await download.saveAs(PATH + downloadFile);
+When('La page est entièrement chargée', async ({ page }) => {
+	await page.getByRole('heading', { name: 'News & Events' }).click();
 });
 
-Then('Le téléchargement est réussi', async ({ page }) => {
-	await expect(fs.promises.stat(PATH + downloadFile)).resolves.not.toBeNull();
-	await fs.promises.unlink(PATH + downloadFile);
-});
+Then('Toutes les images doivent avoir un attribut alt non vide', async ({ page }) => {
+	const imagesWithoutAlt = await page.evaluate(() => {
+		return Array.from(document.querySelectorAll('img'))
+			.filter(img => !img.hasAttribute('alt') || img.getAttribute('alt') === '')
+			.map(img => img.src);
+	});
 
+	expect(imagesWithoutAlt.length).toBe(0);
+});
 ```
-</details>
 
-[➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-five/README.md)
+**📦 Alternative : axe-playwright**
+
+Vous pouvez aussi utiliser la librairie axe-playwright pour faire des audits d’accessibilité automatisés. Elle détecte les problèmes d’accessibilité courants, y compris l'absence d'attributs alt, et fournit des rapports détaillés.
+
+[➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-six/README.md)
