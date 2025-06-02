@@ -1,6 +1,4 @@
-# Test du Profil
-
-### 🔁 Test d'affichage de la Page Duende
+## 🔁 Test d'affichage de la Page Duende
 
 Vérifier que lorsqu’un utilisateur accède à la page https://demo.duendesoftware.com/, un texte spécifique comme "Welcome to the IdentityServer demo" est bien affiché.
 
@@ -51,17 +49,24 @@ Then("Je devrais voir le texte {string}", async ({ page }, expectedText: string)
 
 ### 🧪 Exécution des tests
 
-Tout d'abort il vous faudras generer les tests ! en utilisant cette commande:
+#### ✅ Générer les fichiers de test à partir des fichiers .feature
+
+Cette commande permet de générer automatiquement les squelettes de fichiers .stepdefinitions.ts et .feature en test Playwright.
+
 
 ```bash
 npx bddgen
 ```
 
-Pour exécuter les tests localement, utilisez la commande suivante :
+#### 🚀 Exécuter les tests Playwright
+
+Lancer les tests en mode terminal :
 
 ```bash
 npx playwright test
 ```
+
+
 
 Pour exécuter les tests localement avec l'interface utilisateur, utilisez la commande suivante :
 
@@ -69,18 +74,19 @@ Pour exécuter les tests localement avec l'interface utilisateur, utilisez la co
 npx playwright test --ui
 ```
 
+#### 👨‍💻 Commandes disponibles dans le Codelab
+
 Pour le codelab, deux commandes sont prète à l'utilisation :
 
 ```bash
-npm run watch:bdd
+nom run watch:bdd
 ```
 
-et
+•	Lance la génération des fichiers .stepdefinitions.ts automatiquement à chaque modification des .feature ou en tapant 'rs'
 
 ```bash
 npm run watch:pw
 ```
 
-
 ➡️ Passer à l'exercice suivant
-[https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-two](branche dojo/step-two)
+[https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-two/Readme.md](branche dojo/step-two)
