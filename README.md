@@ -24,10 +24,10 @@ Créez un fichier de test sous `tests/home/home.stepdefinitions.ts` et votre pre
 ```gherkin
 Feature: Accès à la page d'accueil Duende
 
-  Scenario: L'utilisateur voit le contenu de la page d'accueil
-    Given Je suis sur la page d'accueil de Duende
-    When La page est complètement chargée
-    Then Je devrais voir le texte "Welcome to the IdentityServer demo"
+    Scenario: L'utilisateur voit le contenu de la page d'accueil
+        Given Je suis sur la page d'accueil de Duende
+        When La page est complètement chargée
+        Then Je devrais voir le titre "Welcome to Duende"
 ```
 
 **`tests/home/home.stepdefinitions.ts`** :
