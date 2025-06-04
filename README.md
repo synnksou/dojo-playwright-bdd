@@ -1,4 +1,4 @@
-## 🔁 Test d'affichage de la Page Duende
+# 🔁 Test d'affichage de la Page Duende
 
 Vérifier que lorsqu’un utilisateur accède à la page https://demo.duendesoftware.com/, un texte spécifique comme "Welcome to the IdentityServer demo" est bien affiché.
 
@@ -87,6 +87,4 @@ nom run watch:bdd
 ```bash
 npm run watch:pw
 ```
-
-➡️ Passer à l'exercice suivant
-[https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-two/Readme.md](branche dojo/step-two)
+### [➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-two/Readme.md)
