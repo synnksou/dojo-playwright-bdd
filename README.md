@@ -11,7 +11,11 @@
     * Utiliser `waitForEvent('download')` + `fs` pour vérifier que le fichier ZIP est téléchargé.
     * Créer un dossier temporaire (temp/) pour les fichiers téléchargés.
 
-###### **📌 waitForEvent**
+
+
+## Un peu d'aide 
+
+### **📌 waitForEvent**
 
 Playwright propose une API appelée `waitForEvent` qui permet d’attendre un événement spécifique.
 
@@ -25,7 +29,7 @@ Exemple :
 const download = await page.waitForEvent('download');
 ```
 
-**📦 fs (File System)**
+### **📦 fs (File System)**
 Le module fs de Node.js permet de manipuler le système de fichiers, notamment pour :
    * Vérifier si un fichier a bien été téléchargé,
    * Lire, déplacer ou supprimer des fichiers,
@@ -76,4 +80,4 @@ Then('Le téléchargement est réussi', async ({ page }) => {
 ```
 </details>
 
-[➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-five/README.md)
+### [➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-five/README.md)
