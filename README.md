@@ -1,6 +1,6 @@
-### 🎯Ajout du test d'authentification persistante
+# 🎯Ajout du test d'authentification persistante
 
-#### 🔐 Mise en place de l’authentification persistante avec Playwright
+### 🔐 Mise en place de l’authentification persistante avec Playwright
 
 Pour mettre en place une authentification persistante dans vos tests avec **Playwright**, plusieurs approches sont possibles, chacune avec ses avantages selon le contexte.
 
@@ -35,11 +35,11 @@ Dans notre cas nous allons rester sur la simplicité le `Project Dependency`.
 </br>
 
 
-**Option : Project Dependency (la plus simple)**
+## **Option : Project Dependency (la plus simple)**
 
 Cette méthode consiste à utiliser un fichier de setup (auth.setup.ts) pour effectuer l’authentification une fois, puis à injecter le contexte de session (cookies, localStorage, etc.) dans les tests via la configuration du projet.
 
-##### Etapes:
+### Etapes:
 
 1. Créer le fichier `auth.setup.ts` dans tests/utils/ :
     * Scripter la connexion automatique à Duende et sauvegarder l'état avec storageState.
@@ -131,4 +131,4 @@ Ce mécanisme est crucial lorsque vous avez besoin :
 Exemple d'image
 ![image](https://github.com/user-attachments/assets/c2597549-1ad7-4127-a1a3-469f756862df)
 
-[Passage au prochaine exercice !](https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-three)
+### [Passage au prochaine exercice !](https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-three/README.md)
