@@ -10,7 +10,9 @@
 2. Créer `accessibility.stepdefinitions.ts` :
     * Utiliser `page.evaluate()` pour vérifier que chaque image a un alt non vide.
 
-**🔍 À quoi sert page.evaluate() dans ce test ?**
+
+## Un peu d'aide 
+### **🔍 À quoi sert page.evaluate() dans ce test ?**
 La méthode `page.evaluate()` de Playwright permet d’exécuter du JavaScript directement dans le contexte du navigateur, comme si vous étiez dans la console DevTools.
 Cela signifie que vous pouvez interagir directement avec le DOM de la page, récupérer ou manipuler des éléments, ou effectuer des vérifications complexes.
 
