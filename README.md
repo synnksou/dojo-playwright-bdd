@@ -51,6 +51,7 @@ Then('Toutes les images doivent avoir un attribut alt non vide', async ({ page }
 	expect(imagesWithoutAlt.length).toBe(0);
 });
 ```
+</details>
 
 **📦 Alternative : axe-playwright**
 
