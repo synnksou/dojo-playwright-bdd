@@ -132,4 +132,4 @@ nom run watch:bdd
 ```bash
 npm run watch:pw
 ```
-### [➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/edit/dojo/step-two/README.md)
+### [➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-two/README.md)
