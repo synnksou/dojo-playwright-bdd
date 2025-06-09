@@ -1,4 +1,4 @@
-# Test du Profil
+# 🔁 Test d'affichage de la Page Duende
 
 ## 🎯 Génération de code avec Playwright (codegen)
 
