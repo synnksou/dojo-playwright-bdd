@@ -1,62 +1,147 @@
-# ♿️ Test d'Accessibilité des images (attributs alt)
+## 📊 Coverage (monocart)
 
-Énoncé : Écrivez un test BDD avec Playwright pour vérifier que toutes les balises <img> présentes sur la page https://fake-university.com/news-and-events.html possèdent un attribut alt renseigné.
+Pour générer des rapports de couverture de code, nous allons utiliser `monocart-coverage-reports`. Voici comment configurer la couverture de code dans votre projet.
 
-##### Étapes :
+1. Installez `monocart-coverage-reports` :
 
-1. Créer `accessibility.feature` dans tests/accessibility/ :
-   * Gherkin décrivant chargement de la page et vérification des alt.
-
-2. Créer `accessibility.stepdefinitions.ts` :
-    * Utiliser `page.evaluate()` pour vérifier que chaque image a un alt non vide.
-
-
-## Un peu d'aide 
-### **🔍 À quoi sert page.evaluate() dans ce test ?**
-La méthode `page.evaluate()` de Playwright permet d’exécuter du JavaScript directement dans le contexte du navigateur, comme si vous étiez dans la console DevTools.
-Cela signifie que vous pouvez interagir directement avec le DOM de la page, récupérer ou manipuler des éléments, ou effectuer des vérifications complexes.
-
-CF [API Evaluate](https://playwright.dev/docs/api/class-worker#worker-evaluate)
-
-<details>
-<summary>Réponse</summary>
-    
-Gherkin 
-```gherkin
-Feature: Accessibilité des images
-
-  Scenario: Vérifier que toutes les images ont un attribut alt
-    Given Je visite la page d'actualités et d'événements de la fausse université
-    When La page est entièrement chargée   
-    Then Toutes les images doivent avoir un attribut alt non vide
+```bash
+npm install monocart-coverage-reports
 ```
 
-Step.ts
+2. Configurez la couverture de code dans votre fichier `e2e/support/fixtures.ts` :
+
 ```typescript
-const { Given, When, Then } = createBdd();
+import MCR from 'monocart-coverage-reports';
+import { test as base } from 'playwright-bdd';
 
-Given("Je visite la page d'actualités et d'événements de la fausse université", async ({ page }) => {
-	await page.goto('https://fake-university.com/news-and-events.html');
+import coverageOptions from './mcr.config';
+
+export const test = base.extend<{
+	autoTestFixture: string;
+}>({
+	autoTestFixture: [
+		async ({ page }, use) => {
+			await Promise.all([
+				page.coverage.startJSCoverage({
+					resetOnNavigation: false,
+				}),
+			]);
+
+			await use('autoTestFixture');
+
+			const [jsCoverage] = await Promise.all([page.coverage.stopJSCoverage()]);
+			const coverageList = [...jsCoverage];
+			const mcr = MCR(coverageOptions);
+			await mcr.add(coverageList);
+		},
+		{
+			scope: 'test',
+			auto: true,
+		},
+	],
 });
 
-When('La page est entièrement chargée', async ({ page }) => {
-	await page.getByRole('heading', { name: 'News & Events' }).click();
-});
-
-Then('Toutes les images doivent avoir un attribut alt non vide', async ({ page }) => {
-	const imagesWithoutAlt = await page.evaluate(() => {
-		return Array.from(document.querySelectorAll('img'))
-			.filter(img => !img.hasAttribute('alt') || img.getAttribute('alt') === '')
-			.map(img => img.src);
-	});
-
-	expect(imagesWithoutAlt.length).toBe(0);
-});
+export const { Given, When, Then } = createBdd(test); // On export tout les steps avec les fixtures
 ```
-</details>
 
-**📦 Alternative : axe-playwright**
+#### `page.coverage.startJSCoverage`
 
-Vous pouvez aussi utiliser la librairie axe-playwright pour faire des audits d’accessibilité automatisés. Elle détecte les problèmes d’accessibilité courants, y compris l'absence d'attributs alt, et fournit des rapports détaillés.
+Cette fonction démarre la collecte de la couverture de code JavaScript pour la page. Elle prend un objet d'options en paramètre, où vous pouvez spécifier des options comme `resetOnNavigation` pour indiquer si la couverture doit être réinitialisée lors de la navigation.
 
-[➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-six/README.md)
+#### `page.coverage.stopJSCoverage`
+
+Cette fonction arrête la collecte de la couverture de code JavaScript et renvoie les données de couverture collectées. Ces données peuvent ensuite être utilisées pour générer des rapports de couverture de code.
+
+### Configuration des fichiers globaux
+
+Pour configurer les fichiers globaux nécessaires à votre projet de plus avec MCR, vous devez créer deux fichiers : global-setup.ts et global-teardown.ts.
+Ces fichiers permettent de configurer et de nettoyer l'environnement de test avant et après l'exécution des tests respectivement.
+
+#### `global-setup.ts`
+
+Ce fichier est utilisé pour configurer l'environnement de test avant l'exécution des tests. Par exemple, vous pouvez l'utiliser pour initialiser des variables d'environnement, configurer des connexions à des bases de données, etc.
+
+```typescript
+import MCR from 'monocart-coverage-reports';
+
+import coverageOptions from './mcr.config';
+
+async function globalSetup() {
+	const mcr = MCR(coverageOptions);
+	mcr.cleanCache();
+}
+
+export default globalSetup;
+```
+
+#### `global-teardown.ts`
+
+Ce fichier est utilisé pour nettoyer l'environnement de test après l'exécution des tests. Par exemple, vous pouvez l'utiliser pour fermer des connexions à des bases de données, supprimer des fichiers temporaires, etc.
+
+```typescript
+import MCR from 'monocart-coverage-reports';
+
+import coverageOptions from './mcr.config';
+
+async function globalTeardown() {
+	const mcr = MCR(coverageOptions);
+	await mcr.generate();
+}
+
+export default globalTeardown;
+```
+
+#### `mcr.config.ts`
+
+Ce fichier est utilisé pour la configuration du reporting coverage des tests
+
+```typescript
+import { CoverageReportOptions } from 'monocart-coverage-reports';
+
+const coverageOptions: CoverageReportOptions = {
+	enable: true,
+	name: 'playwright-bdd-coverage',
+	reports: ['text', 'text-summary', ['html', { subdirdir: 'coverage' }], ['lcov', { file: 'lcov.info' }]],
+	entryFilter: {
+		'**/node_modules/**': false,
+		'**/tests/**': false,
+		'**/*.[jt]s?(x)': true,
+		'**/app/**': false,
+	},
+	sourceFilter: {
+		'**/node_modules/**': false,
+		'**/tests/**': false,
+		'**/*.[jt]s?(x)': true,
+		'**/app/**': false,
+	},
+	outputDir: './coverage/playwright',
+};
+
+export default coverageOptions;
+```
+
+Exemple de coverage CLI
+
+![image](https://github.com/user-attachments/assets/c26ae8b2-7994-4d69-94d0-68fe58c04916)
+
+Exemple de coverage HTML
+
+![image](https://github.com/user-attachments/assets/8ec498c0-b846-44b0-b66c-46647193bdb0)
+
+### Sources
+
+- [Playwright](https://playwright.dev/docs/intro)
+- [Playwright-Bdd](https://vitalets.github.io/playwright-bdd/#/)
+
+### 🙏 Remerciements
+
+Un grand merci à **Paul Plancq** ([@pplanq](https://www.github.com/pplanq)) pour son accompagnement et ses retours techniques tout au long de ce dojo/codelab.  
+Merci également à **Olivier Sailly** ([@Olisail](https://www.github.com/Olisail)) pour son soutien, ses conseils et son expertise précieuse.
+
+Votre contribution a largement participé à la qualité de ce projet !
+
+### Contribuer
+
+Les contributions sont les bienvenues ! Veuillez ouvrir une issue ou une pull request pour toute suggestion ou amélioration.
+    
+Bonne chance avec votre dojo ! Si vous avez des questions ou des problèmes, n'hésitez pas à demander.
