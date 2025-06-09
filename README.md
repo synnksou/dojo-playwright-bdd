@@ -1,4 +1,49 @@
-# 🔁 Test d'affichage de la Page Duende
+# Test du Profil
+
+## 🎯 Génération de code avec Playwright (codegen)
+
+Playwright propose un outil interactif appelé codegen qui permet d’enregistrer automatiquement des actions dans le navigateur et de générer le code de test correspondant. C’est un excellent point de départ pour écrire rapidement des tests.
+
+### ✅ Commande de base
+
+Pour lancer le codegen, utilisez la commande suivante :
+
+```bash
+npx playwright codegen <url>
+```
+
+Exemple :
+
+```bash
+npx playwright codegen http://localhost:3000
+```
+
+Cette commande ouvre une interface graphique Playwright avec :
+* Un navigateur contrôlé par Playwright,
+* Un panneau latéral qui enregistre automatiquement les actions utilisateur (clics, saisies, navigations...),
+* Le code généré en temps réel (JavaScript, TypeScript, Python, C# ou Java).
+
+
+### 🧠 Ce que codegen sélectionne
+
+Le codegen utilise intelligemment des sélecteurs pour cibler les éléments dans la page. Il choisit :
+* Par texte visible (`getByText`, `locator('text=…')`)
+* Par rôle ARIA et attributs d’accessibilité (`getByRole`) : recommandé pour la robustesse et l’accessibilité
+* Par attributs `([data-testid="..."] ou [id="..."])`
+* Par hiérarchie DOM (si aucun des autres ne convient)
+
+### 🔄 Réutilisation du code
+
+Une fois le code généré :
+* Copiez les actions dans un fichier .spec.ts ou .stepdefinitions.tsx.
+* Adaptez les sélecteurs ou assertions si nécessaire.
+* Exécutez les tests
+
+
+✍️ Astuce Codelab : Pour gagner du temps dans les exercices suivants, démarrez vos tests avec codegen, puis collez le code généré dans vos définitions d’étapes BDD. Cela vous évite d’écrire chaque interaction manuellement.
+
+
+## 🔁 Test d'affichage de la Page Duende
 
 Vérifier que lorsqu’un utilisateur accède à la page https://demo.duendesoftware.com/, un texte spécifique comme "Welcome to the IdentityServer demo" est bien affiché.
 
