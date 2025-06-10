@@ -14,9 +14,9 @@ Si vous ne souhaitez pas utiliser le système de projets multiples, vous pouvez 
 
 **🧩 Autre possibilité : Hooks (Before / After)**
 
-Si vous utilisez **playwright-bdd**, vous pouvez recourir aux **hooks** (`Before`, `After`) pour exécuter du code avant ou après chaque scénario. Cette approche fonctionne bien, mais elle implique que l’authentification se répète à chaque scénario, ce qui peut nuire à la performance.
+Si vous utilisez **playwright-bdd**, vous pouvez recourir aux **hooks** (`Before`, `After`) pour exécuter du code avant ou après chaque scénario. Cette approche fonctionne bien, mais elle implique que l’authentification se répète à chaque scénario, ce qui peut nuire à la performance
 
-**💡 Meilleure pratique : Fixtures**
+**💡 Bonne pratique : Fixtures**
 
 Playwright propose une alternative plus puissante et flexible que les hooks : **les fixtures**. Elles permettent de gérer et partager un état (comme une session d’utilisateur) entre les tests, avec un meilleur contrôle sur leur cycle de vie. Les fixtures sont fortement recommandées par Playwright, car elles remplacent avantageusement les hooks en termes de lisibilité, modularité et maintenabilité.
 
@@ -97,14 +97,14 @@ export default defineConfig({
 	...,
 	projects: [
 		{
-			name: 'auth',
-			testMatch: '**/auth.setup.ts',
-			testDir: 'tests/utils',
+			name: 'auth', // ICI
+			testMatch: '**/auth.setup.ts', // ICI
+			testDir: 'tests/utils', // ICI
 		},
 		{
 			name: 'chromium',
-			use: { ...devices['Desktop Chrome'], storageState: 'tests/.auth/user.json' },
-			dependencies: ['auth'],
+			use: { ...devices['Desktop Chrome'], storageState: 'tests/.auth/user.json' }, // ICI Le storage
+			dependencies: ['auth'], // ICI
 		},
 	],
 });
@@ -132,3 +132,28 @@ Exemple d'image
 ![image](https://github.com/user-attachments/assets/c2597549-1ad7-4127-a1a3-469f756862df)
 
 ### [Passage au prochaine exercice !](https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-three/README.md)
+
+
+
+#### Exemple avec Fixture possible avec Before 
+
+Vous pouvez définir des fixtures pour gérer l'authentification et la navigation vers la page de connexion. Cela vous donnera la flexibilité d'exécuter du code avant chaque test, tout en gardant l'authentification dans une méthode modulaire.
+
+Voici un exemple d'utilisation de la fixture avec BeforeEach : 
+
+```typescript
+import { test as base, createBdd } from "playwright-bdd";
+
+type Fixtures = {};
+
+export const test = base.extend<Fixtures>({});
+
+test.beforeEach(async ({ page }) => {
+  await page.goto(
+    "https://demo.duendesoftware.com/Account/Login?ReturnUrl=%2Fdiagnostics"
+  );
+});
+
+export const { Given, When, Then } = createBdd(test);
+
+```
