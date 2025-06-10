@@ -179,7 +179,7 @@ Après avoir compris et installez le nécessaire vous pouvez passer au première
 
 ### 🙏 Remerciements
 
-Un grand merci à **Paul Plancq** ([@pplanq](https://www.github.com/pplanq)) pour son accompagnement et ses retours techniques tout au long de ce dojo/codelab.  
+Un grand merci à **Paul Plancq** ([@pplancq](https://www.github.com/pplancq)) pour son accompagnement et ses retours techniques tout au long de ce dojo/codelab.  
 Merci également à **Olivier Sailly** ([@Olisail](https://www.github.com/Olisail)) pour son soutien, ses conseils et son expertise précieuse.
 
 Votre contribution a largement participé à la qualité de ce projet !
