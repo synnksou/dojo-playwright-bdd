@@ -4,18 +4,17 @@ Bienvenue dans ce dojo où vous apprendrez à utiliser Playwright et Playwright-
 
 ## 🎯 Objectifs
 
-1. [**Tester la page Duende**]((https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-one/README.md)) :  Vérifiez la redirection et les messages après une tentative de connexion.
+1. [**Tester la page Duende**]((https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-one/README.md)) : Vérifiez la redirection et les messages après une tentative de connexion.
 2. [**Configurer l'authentification**]((https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-two/README.md)) : Mettez en place une session authentifiée persistante.
-3. [**Teste du Profil**]((https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-three/README.md)) : Vérifiez que les informations de session sont visibles après login avec l'utilisation d'un setup.
+3. [**Test du Profil**]((https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-three/README.md)) : Vérifiez que les informations de session sont visibles après connexion avec l'utilisation d'un setup.
 4. [**Tester le téléchargement du repo**]((https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-four/README.md)) : Vérifiez que l’utilisateur peut télécharger le repo GitHub.
-5. [**Tester d'Accessibilité**]((https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-five/README.md)) : Assurez-vous que toutes les images ont un alt.
-6. [**Ajouter le coverage de code**]((https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-six/README.md)) : Générez un rapport de couverture pour vos tests.
-
+5. [**Test d'Accessibilité**]((https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-five/README.md)) : Assurez-vous que toutes les images ont un attribut alt.
+6. [**Ajouter la couverture de code**]((https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-six/README.md)) : Générez un rapport de couverture pour vos tests.
 
 ## ✅ Prérequis
 
-- Node.js installé sur votre machine. (Node 18)
-- Connaissance de Js et Ts
+- Node.js installé sur votre machine (Node 18).
+- Connaissances en JS et TS.
 
 ## 🚀 Installation
 
@@ -26,14 +25,15 @@ git clone https://github.com/synnksou/dojo-playwright-bdd.git
 cd dojo-playwright-bdd
 ```
 
-### 2. Installer les dépendances
-Installez PW
+### 2. Installez les dépendances
+
+Installez Playwright :
 
 ```bash
 npx playwright install
 ```
 
-Installez les autres deps
+Installez les autres dépendances :
 
 ```bash
 npm install
@@ -45,7 +45,7 @@ npm install
 Après avoir installé **Playwright** ainsi que les packages nécessaires à l’utilisation de Playwright-BDD, il est important de configurer correctement l’environnement de test.
 
 #### 📁 Configuration de base avec `defineBddConfig`
-Lorsque vous utilisez Playwright-BDD, il faut spécifier où se trouvent vos fichiers `.feature` et leurs fichiers de définition de pas (`.stepdefinitions.ts`). Pour cela, on utilise la fonction `defineBddConfig` dans le fichier  `playwright.config.ts`:
+Lorsque vous utilisez Playwright-BDD, il faut spécifier où se trouvent vos fichiers `.feature` et leurs fichiers de définition de pas (`.stepdefinitions.ts`). Pour cela, on utilise la fonction `defineBddConfig` dans le fichier `playwright.config.ts` :
 
 ```typescript
 const testDir = defineBddConfig({
@@ -62,7 +62,7 @@ Une fois votre `testDir` défini, il suffit de l’injecter dans la configuratio
 
 ```typescript
 export default defineConfig({
-    testDir, // Le répertoire défini avec defineBddConfig    ...
+    testDir, // Le répertoire défini avec defineBddConfig
     projects: [
         {
             name: 'chromium',
@@ -77,20 +77,20 @@ Cela permet à Playwright de charger correctement vos scénarios BDD (Gherkin) e
 
 ### 📁 Structure recommandée
 
-![Arboresence de Structure]({6DAB1FC4-B7AF-471C-B28B-A5CB1B6621AF}.png)
+![Arborescence de Structure]({6DAB1FC4-B7AF-471C-B28B-A5CB1B6621AF}.png)
 
 #### 📁 `tests/features/`
-C’est ici que tu places tous tes **scénarios BDD** écrits en Gherkin (`.feature`) ainsi que leurs définitions (`.stepdefinitions.ts`).
+C’est ici que vous placez tous vos **scénarios BDD** écrits en Gherkin (`.feature`) ainsi que leurs définitions (`.stepdefinitions.ts`).
 
 Exemple :
-    * `my-feature.feature`: contient les scénarios de test (Given, When, Then…)
-    * `my-feature.stepdefinitions.ts` : contient l’implémentation de ces étapes en TypeScript ou Javascrippt via Playwright-BDD
+  * `my-feature.feature` : contient les scénarios de test (Given, When, Then…)
+  * `my-feature.stepdefinitions.ts` : contient l’implémentation de ces étapes en TypeScript ou JavaScript via Playwright-BDD
 
 Cette organisation par **feature** permet de regrouper facilement les tests liés à une même fonctionnalité.
 
 #### 📁 `tests/utils/`
-Ce dossier est destiné à des outils partagés ou des scripts de préparation, exemple :
- * `auth.setup.ts`: un fichier servant à créer un contexte d’authentification persistent utilisé dans les tests, par exemple via [`APIRequestContext`](https://playwright.dev/docs/api/class-apirequestcontext) et [`storageState`](https://playwright.dev/docs/api/class-apirequestcontext#api-request-context-storage-state).
+Ce dossier est destiné à des outils partagés ou des scripts de préparation, par exemple :
+ * `auth.setup.ts` : un fichier servant à créer un contexte d’authentification persistant utilisé dans les tests, par exemple via [`APIRequestContext`](https://playwright.dev/docs/api/class-apirequestcontext) et [`storageState`](https://playwright.dev/docs/api/class-apirequestcontext#api-request-context-storage-state).
 
 Ce fichier peut être lancé via un projet Playwright dédié dans la config (avec la propriété `testMatch`).
 
@@ -110,22 +110,21 @@ npx playwright test --ui
 
 ### Écriture des tests
 
+#### Exemple d'utilisation de Playwright-bdd
 
-#### Exemple d'utilisation Playwright-bdd
+Ceci est une explication de comment utiliser Playwright-bdd, ne créez pas de fichier ici.
 
-Ceci est une explication de comment utiliser Playwright-bdd, ne crée pas de fichier ici
-
-Pour mettre en place un scénario de test avec playwright-bdd, suivez les étapes suivantes :
-Commencez par ajouter un fichier `.feature` dans le dossier features. Par convention, il est organisé par composant, par exemple :`features/<nomDuComposant>/<nomDuFichier>.feature`.
+Pour mettre en place un scénario de test avec Playwright-bdd, suivez les étapes suivantes :
+Commencez par ajouter un fichier `.feature` dans le dossier features. Par convention, il est organisé par composant, par exemple : `features/<nomDuComposant>/<nomDuFichier>.feature`.
 Ce fichier décrit en langage Gherkin le comportement attendu. Par exemple :
 
 ```gherkin
 Feature: Gestion du panier
 
   Scenario: Ajout d'un produit dans le panier
-....
+  ...
 ```
-Pour chaque fichier .feature, il faut créer un fichier de définitions d'étapes correspondant dans le même dossier, avec l'extension `.stepdefinitions.tsx`. 
+Pour chaque fichier .feature, il faut créer un fichier de définitions d'étapes correspondant dans le même dossier, avec l'extension `.stepdefinitions.ts`. 
 
 Ce fichier associe chaque étape Gherkin à une fonction de test Playwright :
 
@@ -135,15 +134,15 @@ import { createBdd } from 'playwright-bdd';
 const { Given, When, Then } = createBdd();
 
 Given('...', async ({ page }) => {
-  ....
+  // ...
 });
 
-When('....', async ({ page }, title) => {
-....
+When('...', async ({ page }, title) => {
+  // ...
 });
 
-Then('....', async ({ page }, title) => {
-....
+Then('...', async ({ page }, title) => {
+  // ...
 });
 ```
 
@@ -155,7 +154,7 @@ npx bddgen
 ```
 
 ```bash
-npx playwright
+npx playwright test
 ```
 
 Pour plus de simplicité, le projet fournit déjà plusieurs scripts dans le fichier package.json pour simplifier l'exécution des tests :
@@ -169,8 +168,8 @@ Vous pouvez donc simplement lancer :
 npm run watch
 ```
 
-Après avoir compris et installez le nécessaire vous pouvez passer au première exo ! :
-### [Passage au prochaine exercice !](https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-one/README.md)
+Après avoir compris et installé le nécessaire, vous pouvez passer au premier exercice ! :
+### [Passer au prochain exercice !](https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-one/README.md)
 
 ### Sources
 
@@ -179,7 +178,7 @@ Après avoir compris et installez le nécessaire vous pouvez passer au première
 
 ### 🙏 Remerciements
 
-Un grand merci à **Paul Plancq** ([@pplanq](https://www.github.com/pplanq)) pour son accompagnement et ses retours techniques tout au long de ce dojo/codelab.  
+Un grand merci à **Paul Plancq** ([@pplancq](https://www.github.com/pplancq)) pour son accompagnement et ses retours techniques tout au long de ce dojo/codelab.  
 Merci également à **Olivier Sailly** ([@Olisail](https://www.github.com/Olisail)) pour son soutien, ses conseils et son expertise précieuse.
 
 Votre contribution a largement participé à la qualité de ce projet !
