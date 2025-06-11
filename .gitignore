@@ -19,4 +19,4 @@ cucumber-report
 .auth
 coverage
 reports
-.feature-gen
+.features-gen
