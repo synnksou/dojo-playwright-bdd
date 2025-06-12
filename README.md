@@ -42,7 +42,7 @@ Dans notre cas, nous allons opter pour la simplicité en utilisant la méthode `
 
 ## ✅ Option : Project Dependency (la plus simple)
 
-Cette méthode consiste à utiliser un fichier de setup (`auth.setup.ts`) pour effectuer l’authentification une fois, puis à injecter le contexte de session (cookies, localStorage, etc.) dans les tests via la configuration du projet.
+Cette méthode consiste à utiliser un fichier de setup (`auth.setup.ts`) pour effectuer l’authentification une fois, puis à injecter le contexte de session (cookies, localStorage, etc.) dans les tests via la configuration du projet. L'url est https://demo.duendesoftware.com/diagnostics
 
 ### Étapes
 
