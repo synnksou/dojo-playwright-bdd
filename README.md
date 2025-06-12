@@ -27,8 +27,10 @@ Feature: Profil Duende
 ```
 
 ```typescript
+import { createBdd } from 'playwright-bdd';
+import { expect } from 'playwright/test';
 
-import { Given, When, Then } from '@utils/fixtures';
+const { Given, When, Then } = createBdd();
 
 Given('Je suis authentifié sur le Duende', async ({ page }) => {
 	await page.goto('https://demo.duendesoftware.com');
