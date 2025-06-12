@@ -1,147 +1,128 @@
-# 🎯Ajout du test d'authentification persistante
+# 🎯 Ajout du test d'authentification persistante
+
+## 📝 Introduction
+
+Ce guide présente comment configurer une **authentification persistante avec Playwright** pour éviter de répéter la connexion à chaque test. Nous verrons plusieurs approches disponibles dans Playwright, avec un focus sur la méthode recommandée : **Project Dependency**, permettant une authentification unique au début de l'exécution des tests.
+
+---
 
 ### 🔐 Mise en place de l’authentification persistante avec Playwright
 
 Pour mettre en place une authentification persistante dans vos tests avec **Playwright**, plusieurs approches sont possibles, chacune avec ses avantages selon le contexte.
 
-**✅ Option recommandée : Project Dependency (authentification avant tous les tests)**
+#### ✅ Option recommandée : Project Dependency (authentification avant tous les tests)
 
 La méthode la plus propre et modulaire consiste à créer un projet spécifique dédié à l’authentification (via un fichier `auth.setup.ts`), puis à l’utiliser comme **dépendance** dans votre configuration. Cela permet d’exécuter l’authentification une seule fois **avant toute la suite de tests**, tout en gardant une architecture claire et scalable.
 
-**🔁 Alternative : Global Setup**
+#### 🔁 Alternative : Global Setup
 
-Si vous ne souhaitez pas utiliser le système de projets multiples, vous pouvez opter pour le **global setup**, une fonction spéciale qui s’exécute une seule fois **avant tous les tests**. Elle est idéale pour effectuer des actions globales, comme la connexion à une application et la sauvegarde du contexte utilisateur ou encore du coverage.
+Si vous ne souhaitez pas utiliser le système de projets multiples, vous pouvez opter pour le **global setup**, une fonction spéciale qui s’exécute une seule fois **avant tous les tests**. Elle est idéale pour effectuer des actions globales, comme la connexion à une application ou la configuration du coverage.
 
-**🧩 Autre possibilité : Hooks (Before / After)**
+#### 🧩 Autre possibilité : Hooks (Before / After)
 
-Si vous utilisez **playwright-bdd**, vous pouvez recourir aux **hooks** (`Before`, `After`) pour exécuter du code avant ou après chaque scénario. Cette approche fonctionne bien, mais elle implique que l’authentification se répète à chaque scénario, ce qui peut nuire à la performance
+Si vous utilisez **playwright-bdd**, vous pouvez recourir aux **hooks** (`Before`, `After`) pour exécuter du code avant ou après chaque scénario. Cette approche fonctionne bien, mais elle implique que l’authentification se répète à chaque scénario, ce qui peut nuire aux performances.
 
-**💡 Bonne pratique : Fixtures**
+#### 💡 Bonne pratique : Fixtures
 
-Playwright propose une alternative plus puissante et flexible que les hooks : **les fixtures**. Elles permettent de gérer et partager un état (comme une session d’utilisateur) entre les tests, avec un meilleur contrôle sur leur cycle de vie. Les fixtures sont fortement recommandées par Playwright, car elles remplacent avantageusement les hooks en termes de lisibilité, modularité et maintenabilité.
+Playwright propose une alternative plus puissante et flexible que les hooks : **les fixtures**. Elles permettent de gérer et partager un état (comme une session d’utilisateur) entre les tests, avec un meilleur contrôle sur leur cycle de vie.
 
-Dans notre cas nous allons rester sur la simplicité le `Project Dependency`.
+Dans notre cas, nous allons opter pour la simplicité en utilisant la méthode `Project Dependency`.
 
-<br>
 <details>
-    <summary>  🧠 <b> À savoir – Petit rappel des concepts </b>: </summary>
+    <summary>🧠 <b>Petit rappel des concepts</b></summary>
 
-* **Hook (Before, After)** : Fonctions exécutées avant ou après chaque scénario. Pratiques pour des actions répétitives. Vous pouvez les retrouvez ici [Hooks](https://vitalets.github.io/playwright-bdd/#/writing-steps/hooks)
-* **BeforeAll / AfterAll** : Exécuté une seule fois avant/à la fin de tous les tests dans un fichier ou un projet.
-* **Global setup** : Exécuté une seule fois avant toute la suite de tests, idéal pour des configurations lourdes comme l’authentification, coverage.
-* **Project dependency** : Permet de structurer des dépendances entre projets de test
-* **Fixtures** : Systèmes de gestion d’état et de ressources partagées dans Playwright, remplaçant les hooks avec une approche plus modulaire.
+* **Hooks (Before, After)** : Fonctions exécutées avant ou après chaque scénario. Pratiques pour des actions répétitives.
+* **BeforeAll / AfterAll** : Exécutées une seule fois avant ou après tous les tests d’un fichier ou projet.
+* **Global setup** : S’exécute une seule fois avant toute la suite de tests.
+* **Project dependency** : Structure des dépendances entre projets de test.
+* **Fixtures** : Permettent de gérer des ressources partagées dans Playwright de manière modulaire.
 </details>
-</br>
 
+---
 
-## **Option : Project Dependency (la plus simple)**
+## ✅ Option : Project Dependency (la plus simple)
 
-Cette méthode consiste à utiliser un fichier de setup (auth.setup.ts) pour effectuer l’authentification une fois, puis à injecter le contexte de session (cookies, localStorage, etc.) dans les tests via la configuration du projet.
+Cette méthode consiste à utiliser un fichier de setup (`auth.setup.ts`) pour effectuer l’authentification une fois, puis à injecter le contexte de session (cookies, localStorage, etc.) dans les tests via la configuration du projet.
 
-### Etapes:
+### Étapes
 
-1. Créer le fichier `auth.setup.ts` dans tests/utils/ :
-    * Scripter la connexion automatique à Duende et sauvegarder l'état avec storageState.
-      * Se connecter à l’application.
-      * Sauvegarder le contexte dans un fichier (auth.json par exemple).
+1. **Créer le fichier `auth.setup.ts` dans `tests/utils/`** :
+   * Script de connexion automatique à Duende
+   * Sauvegarde de l'état via `storageState`
 
-2. Modifier `playwright.config.ts` :
-   * Dans le fichier `playwright.config.ts`, créez un projet Playwright qui dépend de ce setup via dependencies.   
-     * Ajouter un projet auth pour exécuter ce test en premier.
-     * Ajouter storageState: `tests/.auth/user.json` dans les autres projets.
+2. **Modifier `playwright.config.ts`** :
+   * Créez un projet d’authentification avec `testMatch`
+   * Ajoutez une dépendance dans les autres projets
+   * Chargez l’état via `storageState`
 
-💾 **À quoi sert storageState ?**
-`storageState` est une option de configuration dans Playwright qui permet de charger un état de session précédemment sauvegardé. Ce fichier contient toutes les informations nécessaires à la simulation d’un utilisateur déjà connecté :
-   * Cookies,
-   * Local storage,
-   * Sessions,
-   * etc.
+💾 **À quoi sert `storageState` ?**
+
+`storageState` permet de charger un état de session précédemment sauvegardé. Il contient :
+* Cookies,
+* Local storage,
+* Sessions, etc.
 
 <details>
-    <summary>Réponse</summary>
-
+<summary>Réponse</summary>
 
 📄 `tests/utils/auth.setup.ts`
 
-```typescript
+```ts
 import { expect, test as setup } from '@playwright/test';
 
 const authFile = 'tests/.auth/user.json';
 
 setup('authenticate', async ({ page }) => {
-	await page.goto('https://demo.duendesoftware.com/diagnostics');
+  await page.goto('https://demo.duendesoftware.com/diagnostics');
 
-	await expect(page).toHaveTitle(/Duende IdentityServer/);
+  await expect(page).toHaveTitle(/Duende IdentityServer/);
+  await page.locator('#Input_Username').fill("bob");
+  await page.locator('#Input_Password').fill("bob");
+  await page.getByRole('button', { name: 'Login' }).click();
 
-	await page.locator('#Input_Username').fill("bob");
-
-	await page.locator('#Input_Password').fill("bob");
-
-    await page.getByRole('button', { name: 'Login' }).click();
-
-	await page.context().storageState({ path: authFile });
+  await page.context().storageState({ path: authFile });
 });
 ```
 
+💡 Cette méthode peut aussi fonctionner avec [`APIRequestContext`](https://playwright.dev/docs/api/class-apirequestcontext) pour l’authentification via API, sans navigateur.
 
-> 💡 Dans cette méthode, on utilise [`APIRequestContext`](https://playwright.dev/docs/api/class-apirequestcontext) :  
-> C’est un objet fourni par Playwright permettant de faire des requêtes HTTP directement (POST, GET, etc.) sans ouvrir de navigateur.  
-> Il est idéal pour réaliser une authentification via une API, récupérer un token, puis sauvegarder le contexte utilisateur pour le réutiliser dans vos tests.
+📄 `playwright.config.ts`
 
-Ensuite il suffit de l'ajouter dans la config Playwright dans le fichier `playwright.config.ts`
-
-```typescript
+```ts
 export default defineConfig({
-	testDir,
-	...,
-	projects: [
-		{
-			name: 'auth', // ICI
-			testMatch: '**/auth.setup.ts', // ICI
-			testDir: 'tests/utils', // ICI
-		},
-		{
-			name: 'chromium',
-			use: { ...devices['Desktop Chrome'], storageState: 'tests/.auth/user.json' }, // ICI Le storage
-			dependencies: ['auth'], // ICI
-		},
-	],
+  testDir,
+  projects: [
+    {
+      name: 'auth',
+      testMatch: '**/auth.setup.ts',
+      testDir: 'tests/utils',
+    },
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'], storageState: 'tests/.auth/user.json' },
+      dependencies: ['auth'],
+    },
+  ],
 });
-
 ```
 
-###### 🧠 **Pourquoi utiliser dependencies: `['auth']` ?**
+#### 🧠 Pourquoi utiliser `dependencies: ['auth']` ?
 
-L’option dependencies permet de spécifier que le projet principal (chromium, ici) dépend du projet auth. Cela garantit que le projet auth est exécuté et terminé avant que chromium ne démarre ses tests.
-
-Ce mécanisme est crucial lorsque vous avez besoin :
-
-* d’effectuer une authentification une seule fois,
-
-* de sauvegarder un état de session (storageState),
-
-* et de le réutiliser dans tous les autres projets de test.
-
-✅ En déclarant cette dépendance, vous assurez que tous vos tests bénéficient d’un contexte utilisateur déjà authentifié, sans avoir à refaire l’authentification à chaque test.
-
-
+Cela garantit que le projet `auth` est exécuté **avant** que `chromium` ne démarre ses tests. Vous bénéficiez ainsi d’un **contexte utilisateur déjà connecté** pour tous les tests suivants.
 </details>
 
-Exemple d'image
+📷 Exemple d’image :  
 ![image](https://github.com/user-attachments/assets/c2597549-1ad7-4127-a1a3-469f756862df)
 
-### [Passage au prochaine exercice !](https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-three/README.md)
+### [➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-three/README.md)
 
+---
 
+## ⚙️ Exemple avec `BeforeEach`
 
-#### Exemple avec Fixture possible avec Before 
+Vous pouvez définir des hooks pour gérer l'authentification et la navigation vers la page de connexion.
 
-Vous pouvez définir des fixtures pour gérer l'authentification et la navigation vers la page de connexion. Cela vous donnera la flexibilité d'exécuter du code avant chaque test, tout en gardant l'authentification dans une méthode modulaire.
-
-Voici un exemple d'utilisation de la fixture avec BeforeEach : 
-
-```typescript
+```ts
 import { test as base, createBdd } from "playwright-bdd";
 
 type Fixtures = {};
@@ -149,11 +130,48 @@ type Fixtures = {};
 export const test = base.extend<Fixtures>({});
 
 test.beforeEach(async ({ page }) => {
-  await page.goto(
-    "https://demo.duendesoftware.com/Account/Login?ReturnUrl=%2Fdiagnostics"
-  );
+  await page.goto("https://demo.duendesoftware.com/Account/Login?ReturnUrl=%2Fdiagnostics");
 });
 
 export const { Given, When, Then } = createBdd(test);
+```
 
+## ⚙️ Exemple avec Fixture partagée
+
+Vous pouvez aussi définir une fixture partagée que vous appelez dans votre test.
+
+Dans votre fichier utils : 
+
+```ts
+type Fixtures = {
+  auth: { loginFunction: () => Promise<void> };
+};
+
+export const test = base.extend<Fixtures>({
+  auth: async ({ page }, use) => {
+    const loginFunction = async () => {
+      await page.goto('https://demo.duendesoftware.com/diagnostics');
+      await expect(page).toHaveTitle(/Duende IdentityServer/);
+
+      await page.locator('#Input_Username').fill('bob');
+      await page.locator('#Input_Password').fill('bob');
+
+      await page.getByRole('button', { name: 'Login' }).click();
+      // retour à la page d'accueil après la connexion
+      await page.goto('https://demo.duendesoftware.com/');
+    };
+
+    await use({ loginFunction });
+  },
+});
+```
+
+Et voici un exemple d'utilisation dans votre step : 
+
+```ts
+import { Given, When, Then } from '@utils/fixtures';
+
+Given('Je suis authentifié sur le Duende', async ({ page, auth }) => {
+  await auth.loginFunction();
+});
 ```
