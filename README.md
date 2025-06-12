@@ -27,21 +27,23 @@ cd dojo-playwright-bdd
 
 ### 2. Installez les dépendances
 
-Installez Playwright :
-
-```bash
-npx playwright install
-```
-
 Installez les autres dépendances :
 
 ```bash
 npm install
 ```
 
+Installez Playwright :
+
+```bash
+npx playwright install
+```
+
+
 ## Configuration
 
 ### 🧩 Playwright et Playwright-BDD
+
 Après avoir installé **Playwright** ainsi que les packages nécessaires à l’utilisation de Playwright-BDD, il est important de configurer correctement l’environnement de test.
 
 #### 📁 Configuration de base avec `defineBddConfig`
