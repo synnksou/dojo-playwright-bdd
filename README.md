@@ -1,12 +1,16 @@
-# 🔁 Test d'affichage de la Page Duende
+# 🔁 Test d'affichage de la Page Duende & CodeGen
+
+## 📝 Introduction
+
+Ce premier exercice présente un tutoriel pratique pour générer des tests automatisés à l’aide de l’outil **Playwright Codegen**, en commençant par des interactions simples sur une page web (ici, celle de Duende IdentityServer). Il inclut également des exemples concrets de scénarios BDD, leur implémentation, et les commandes pour exécuter les tests dans un environnement Playwright.
 
 ## 🎯 Génération de code avec Playwright (codegen)
 
-Playwright propose un outil interactif appelé codegen qui permet d’enregistrer automatiquement des actions dans le navigateur et de générer le code de test correspondant. C’est un excellent point de départ pour écrire rapidement des tests.
+Playwright propose un outil interactif appelé Codegen qui permet d’enregistrer automatiquement des actions dans le navigateur et de générer le code de test correspondant. C’est un excellent point de départ pour écrire rapidement des tests.
 
 ### ✅ Commande de base
 
-Pour lancer le codegen, utilisez la commande suivante :
+Pour lancer le Codegen, utilisez la commande suivante :
 
 ```bash
 npx playwright codegen <url>
@@ -23,39 +27,37 @@ Cette commande ouvre une interface graphique Playwright avec :
 * Un panneau latéral qui enregistre automatiquement les actions utilisateur (clics, saisies, navigations...),
 * Le code généré en temps réel (JavaScript, TypeScript, Python, C# ou Java).
 
+### 🧠 Ce que Codegen sélectionne
 
-### 🧠 Ce que codegen sélectionne
-
-Le codegen utilise intelligemment des sélecteurs pour cibler les éléments dans la page. Il choisit :
-* Par texte visible (`getByText`, `locator('text=…')`)
-* Par rôle ARIA et attributs d’accessibilité (`getByRole`) : recommandé pour la robustesse et l’accessibilité
-* Par attributs `([data-testid="..."] ou [id="..."])`
-* Par hiérarchie DOM (si aucun des autres ne convient)
+Le Codegen utilise intelligemment des sélecteurs pour cibler les éléments dans la page. Il choisit :
+* Par texte visible (`getByText`, `locator('text=…')`),
+* Par rôle ARIA et attributs d’accessibilité (`getByRole`) : recommandé pour la robustesse et l’accessibilité,
+* Par attributs `([data-testid="..."] ou [id="..."])`,
+* Par hiérarchie DOM (si aucun des autres ne convient).
 
 ### 🔄 Réutilisation du code
 
 Une fois le code généré :
-* Copiez les actions dans un fichier .spec.ts ou .stepdefinitions.tsx.
-* Adaptez les sélecteurs ou assertions si nécessaire.
-* Exécutez les tests
+* Copiez les actions dans un fichier `.spec.ts` ou `.stepdefinitions.tsx`,
+* Adaptez les sélecteurs ou assertions si nécessaire,
+* Exécutez les tests.
 
+✍️ **Astuce Codelab** : Pour gagner du temps dans les exercices suivants, démarrez vos tests avec Codegen, puis collez le code généré dans vos définitions d’étapes BDD. Cela vous évite d’écrire chaque interaction manuellement.
 
-✍️ Astuce Codelab : Pour gagner du temps dans les exercices suivants, démarrez vos tests avec codegen, puis collez le code généré dans vos définitions d’étapes BDD. Cela vous évite d’écrire chaque interaction manuellement.
+## 🧪 Test d'affichage de la Page Duende
 
+Vérifiez que lorsqu’un utilisateur accède à la page https://demo.duendesoftware.com/, un texte spécifique comme "Welcome to the IdentityServer demo" est bien affiché.
 
-## 🔁 Test d'affichage de la Page Duende
+### 📝 Étapes
 
-Vérifier que lorsqu’un utilisateur accède à la page https://demo.duendesoftware.com/, un texte spécifique comme "Welcome to the IdentityServer demo" est bien affiché.
+1. Créez le fichier `home.feature` dans `tests/features/home/` :
+    * Écrivez un scénario Gherkin décrivant l'accès à la page d’accueil de Duende et la vérification d’un texte affiché.
 
-##### Étapes :
-1. Créer le fichier `home.feature` dans `tests/features/home/` :
-    * Écrire un scénario Gherkin décrivant l'accès à la page d’accueil de Duende et la vérification d’un texte affiché.
-
-2. Créer `home.stepdefinitions.ts` dans `tests/features/home/` :
-    * Implémenter les étapes suivantes :
-      * Aller sur la page https://demo.duendesoftware.com/
-      * Attendre que la page soit complètement chargée
-      * Vérifier qu’un message spécifique (ex. : "Welcome to Duende IdentityServer") est affiché
+2. Créez `home.stepdefinitions.ts` dans `tests/features/home/` :
+    * Implémentez les étapes suivantes :
+        * Aller sur la page https://demo.duendesoftware.com/
+        * Attendre que la page soit complètement chargée
+        * Vérifier qu’un message spécifique (ex. : "Welcome to Duende IdentityServer") est affiché
 
 <details>
     <summary>Réponse</summary>
@@ -88,16 +90,14 @@ Then("Je devrais voir le texte {string}", async ({ page }, expectedText: string)
   const isVisible = await page.getByText(expectedText, { exact: false }).isVisible();
   expect(isVisible).toBeTruthy();
 });
-
 ```
 </details>
 
 ### 🧪 Exécution des tests
 
-#### ✅ Générer les fichiers de test à partir des fichiers .feature
+#### ✅ Générer les fichiers de test à partir des fichiers `.feature`
 
-Cette commande permet de générer automatiquement les squelettes de fichiers .stepdefinitions.ts et .feature en test Playwright.
-
+Cette commande permet de générer automatiquement les squelettes de fichiers `.stepdefinitions.ts` et `.feature` pour Playwright :
 
 ```bash
 npx bddgen
@@ -111,8 +111,6 @@ Lancer les tests en mode terminal :
 npx playwright test
 ```
 
-
-
 Pour exécuter les tests localement avec l'interface utilisateur, utilisez la commande suivante :
 
 ```bash
@@ -121,15 +119,16 @@ npx playwright test --ui
 
 #### 👨‍💻 Commandes disponibles dans le Codelab
 
-Pour le codelab, deux commandes sont prète à l'utilisation :
+Deux commandes sont prêtes à l’utilisation :
 
 ```bash
-nom run watch:bdd
+npm run watch:bdd
 ```
 
-•	Lance la génération des fichiers .stepdefinitions.ts automatiquement à chaque modification des .feature ou en tapant 'rs'
+• Lance la génération des fichiers `.stepdefinitions.ts` automatiquement à chaque modification des `.feature` ou en tapant `rs`
 
 ```bash
 npm run watch:pw
 ```
+
 ### [➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-two/README.md)
