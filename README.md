@@ -177,6 +177,7 @@ Après avoir compris et installé le nécessaire, vous pouvez passer au premier 
 
 - [Playwright](https://playwright.dev/docs/intro)
 - [Playwright-Bdd](https://vitalets.github.io/playwright-bdd/#/)
+- [Slide](https://pitch.com/v/playwright-gherkin-for-end-to-end-tests-np92pi)
 
 ### 🙏 Remerciements
 
