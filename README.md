@@ -36,7 +36,7 @@ npm install
 Installez Playwright :
 
 ```bash
-npx playwright install
+npx playwright install chromium
 ```
 
 
