@@ -9,7 +9,7 @@ Given('Je suis la page du repo', async ({ page }) => {
   await page.goto('https://github.com/synnksou/dojo-playwright-bdd');
 });
 
-When('Je télécharge le repo', async ({ page }, email) => {
+When('Je télécharge le repo', async ({ page }) => {
   await page.getByRole('button', { name: 'Code' }).click();
   const downloadPromise = page.waitForEvent('download');
   await page.getByLabel('Download ZIP').click();
