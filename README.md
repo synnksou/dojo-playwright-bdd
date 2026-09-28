@@ -10,6 +10,7 @@ Bienvenue dans ce dojo où vous apprendrez à utiliser Playwright et Playwright-
 4. [**Tester le téléchargement du repo**]((https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-four/README.md)) : Vérifiez que l’utilisateur peut télécharger le repo GitHub.
 5. [**Test d'Accessibilité**]((https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-five/README.md)) : Assurez-vous que toutes les images ont un attribut alt.
 6. [**Ajouter la couverture de code**]((https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-six/README.md)) : Générez un rapport de couverture pour vos tests.
+7. [**Développer avec l'IA et le BDD**]((https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-seven/README.md)) : Utilisez un agent IA pour concevoir, implémenter et valider un scénario Playwright-BDD.
 
 ## ✅ Prérequis
 
