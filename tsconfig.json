@@ -1,12 +1,13 @@
 {
 	"compilerOptions": {
 		"target": "es2021",
-		"module": "commonjs",
+		"module": "node16",
 		"strict": true,
 		"noEmit": true,
 		"useUnknownInCatchVariables": false,
 		"forceConsistentCasingInFileNames": true,
-		"moduleResolution": "node",
+		"moduleResolution": "node16",
+		"types": ["node"],
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
 		"paths": {

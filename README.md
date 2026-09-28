@@ -50,6 +50,10 @@ Après avoir installé **Playwright** ainsi que les packages nécessaires à l�
 Lorsque vous utilisez Playwright-BDD, il faut spécifier où se trouvent vos fichiers `.feature` et leurs fichiers de définition de pas (`.stepdefinitions.ts`). Pour cela, on utilise la fonction `defineBddConfig` dans le fichier `playwright.config.ts` :
 
 ```typescript
+
+import { defineConfig, devices } from '@playwright/test';
+import { defineBddConfig } from 'playwright-bdd';
+
 const testDir = defineBddConfig({
 	features: 'tests/features/**/*.feature',
 	steps: 'tests/features/**/*.stepdefinitions.ts',
