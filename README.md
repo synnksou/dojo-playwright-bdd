@@ -51,4 +51,4 @@ Then('Je devrais voir les droits', async ({ page }) => {
 ```
 </details>
     
-[➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-four/README.md)
+[➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-four/README.md)
