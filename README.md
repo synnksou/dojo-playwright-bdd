@@ -9,7 +9,7 @@
 
 2. Créer `download.stepdefinitions.ts` :
     * Utiliser `waitForEvent('download')` + `fs` pour vérifier que le fichier ZIP est téléchargé.
-    * Créer un dossier temporaire (temp/) pour les fichiers téléchargés.
+    * Créer automatiquement le dossier temporaire (temp/) si nécessaire pour les fichiers téléchargés.
 
 
 
@@ -69,6 +69,7 @@ When('Je télécharge le repo', async ({ page }, email) => {
 	await page.getByLabel('Download ZIP').click();
 	const download = await downloadPromise;
 	downloadFile = download.suggestedFilename();
+	await fs.promises.mkdir(PATH, { recursive: true });
 	await download.saveAs(PATH + downloadFile);
 });
 
@@ -80,4 +81,4 @@ Then('Le téléchargement est réussi', async ({ page }) => {
 ```
 </details>
 
-### [➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-five/README.md)
+### [➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-five/README.md)
