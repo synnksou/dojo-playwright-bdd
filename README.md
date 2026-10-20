@@ -59,4 +59,4 @@ Then('Toutes les images doivent avoir un attribut alt non vide', async ({ page }
 
 Vous pouvez aussi utiliser la librairie axe-playwright pour faire des audits d’accessibilité automatisés. Elle détecte les problèmes d’accessibilité courants, y compris l'absence d'attributs alt, et fournit des rapports détaillés.
 
-[➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/tree/dojo/step-six/README.md)
+[➡️ Passer à l'exercice suivant](https://github.com/synnksou/dojo-playwright-bdd/blob/dojo/step-six/README.md)
