@@ -1,3 +1,9 @@
+## Authentification avec une fixture
+
+Contrairement à `dojo/step-six`, qui utilise une dépendance de projet et `storageState`, cette branche fournit la fixture `auth` dans `tests/utils/fixtures.ts`. Elle expose `loginFunction`, appelée par les étapes du profil avec `await auth.loginFunction()` dans `tests/features/profil/profile.stepdefinitions.ts`.
+
+`tests/utils/auth.setup.ts` contient aussi une procédure de connexion et d'enregistrement du `storageState`, mais elle n'est pas utilisée par la configuration de cette branche : `playwright.config.ts` ne déclare pas de projet `auth.setup`.
+
 ## 📊 Coverage (monocart)
 
 Pour générer des rapports de couverture de code, nous allons utiliser `monocart-coverage-reports`. Voici comment configurer la couverture de code dans votre projet.
