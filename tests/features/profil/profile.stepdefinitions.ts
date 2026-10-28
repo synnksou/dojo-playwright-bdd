@@ -6,7 +6,7 @@ Given('Je suis authentifié sur le Duende', async ({ page }) => {
 });
 
 When('Je navigue vers le profil', async ({ page }) => {
-  await page.getByRole('link', { name: 'Go ' }).nth(1).click();
+  await page.getByRole('link', { name: 'Go'}).nth(4).click();
 });
 
 Then('Je devrais voir les cookies', async ({ page }) => {
