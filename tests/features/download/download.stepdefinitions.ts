@@ -10,12 +10,12 @@ Given('Je suis la page du repo', async ({ page }) => {
 });
 
 When('Je télécharge le repo', async ({ page }) => {
-	await page.getByRole('button', { name: 'Code' }).click();
-	const downloadPromise = page.waitForEvent('download');
-	await page.getByLabel('Download ZIP').click();
-	const download = await downloadPromise;
-	downloadFile = download.suggestedFilename();
-	await download.saveAs(PATH + downloadFile);
+  await page.getByRole('button', { name: 'Code', exact: true }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByLabel('Download ZIP').click();
+  const download = await downloadPromise;
+  downloadFile = download.suggestedFilename();
+  await download.saveAs(PATH + downloadFile);
 });
 
 Then('Le téléchargement est réussi', async ({ page }) => {
